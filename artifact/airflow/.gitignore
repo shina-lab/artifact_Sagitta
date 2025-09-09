@@ -1,0 +1,35 @@
+airflow.db
+airflow.cfg
+standalone_admin_password.txt
+webserver_config.py
+
+# Airflow temporary files
+logs/
+airflow.db
+airflow.sqlite
+*.pid
+*.log
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Other environment files
+.env
+*.swp
+
+# Auto-generated Airflow plugins
+plugins/__pycache__/
+plugins/*.pyc
+
+# Service configuration files
+unittest.cfg
+*.bak
+
+# IDE and OS generated files
+.vscode/
+.idea/
+.DS_Store
+
+# Additional (add/remove as needed)
+# secrets/  # Highly confidential files and directories should generally be excluded

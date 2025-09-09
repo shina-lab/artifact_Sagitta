@@ -1,0 +1,17 @@
+
+justification:
+Figure 5 の Crash Site で表示したコードと、生成された局所グラフの最下部のノードのコードが異なるのは正しいです。
+実際にクラッシュが発生するコードは `SETPIXEL(op, grey);` です。Figure 5ではわかりやすさのため、こちらを表示しました。
+一方、Magmaのカナリア `MAGMA_LOG` はクラッシュの発生を判定するコードで（論文の〜を参照）、局所化グラフを作るときの起点としたため、svgではこちらが表示されています。
+結局、両者はコード上は結局同じクラッシュ箇所を指しますので、この差異は問題ありません。
+
+```
+                while (n-- > 0 && npixels < imagewidth)
+#endif
+                {
+#ifdef MAGMA_ENABLE_CANARIES
+                    MAGMA_LOG("TIF008", op_offset >= scanline); // 局所化グラフが表示したコード
+#endif
+					SETPIXEL(op, grey); // 実際のクラッシュ箇所。Figure 5で表示したコード
+                }
+```
