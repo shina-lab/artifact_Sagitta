@@ -34,7 +34,7 @@ RUN locale-gen ja_JP.UTF-8
 RUN add-apt-repository "deb [ arch=amd64 ] https://downloads.skewed.de/apt jammy main"
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7A80C8ED4FCCBE09
 RUN apt update && apt install -y python3-graph-tool libcairomm-1.0-dev
-RUN pip3 install numpy scipy pycairo==1.26.1 matplotlib
+RUN pip3 install "numpy<2" scipy pycairo==1.26.1 matplotlib
 
 ### Create user
 ### NOTE: ホームディレクトリはマウントポイントとして使う

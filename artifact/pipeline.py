@@ -101,4 +101,6 @@ if __name__ == "__main__":
         collect_results()
     
     end_time = time.time()
+    print("========================================")
+    print("[*] Completed successfully!")
     print(f"[*] Total execution time: {end_time - start_time:.2f} seconds")

@@ -1,4 +1,4 @@
-==== Artifact of Sagitta
+=== Artifact of Sagitta
 
 This artifact contains source code for Section 6 of our paper.
 
@@ -10,7 +10,7 @@ To reproduce Claim 1: run install.sh then claims/claim1/run.sh.
 Expected output is in claims/claim1/expected/.
 
 
----- List of source code and input/output files
+--- List of source code and input/output files
 どのフォルダーがコード、ベンチマーク、データなどに対応するかなどの説明します。
 
 Software components (source code): 
