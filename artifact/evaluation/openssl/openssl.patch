@@ -1,0 +1,12 @@
+diff --git a/crypto/getenv.c b/crypto/getenv.c
+index e79b6cc161..e9e219f523 100644
+--- a/crypto/getenv.c
++++ b/crypto/getenv.c
+@@ -91,7 +91,7 @@ char *ossl_safe_getenv(const char *name)
+ #if defined(__GLIBC__) && defined(__GLIBC_PREREQ)
+ # if __GLIBC_PREREQ(2, 17)
+ #  define SECURE_GETENV
+-    return secure_getenv(name);
++    return getenv(name);
+ # endif
+ #endif

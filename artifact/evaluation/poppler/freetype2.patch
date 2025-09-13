@@ -1,0 +1,13 @@
+diff --git a/src/gzip/zlib.h b/src/gzip/zlib.h
+index a4e82c6a0..6ccb35297 100644
+--- a/src/gzip/zlib.h
++++ b/src/gzip/zlib.h
+@@ -161,7 +161,7 @@ typedef z_stream FAR *z_streamp;
+ #define Z_DEFLATED   8
+ /* The deflate compression method (the only one supported in this version) */
+
+-#define Z_NULL  0  /* for initializing zalloc, zfree, opaque */
++#define Z_NULL  NULL  /* for initializing zalloc, zfree, opaque */
+
+
+                         /* basic functions */

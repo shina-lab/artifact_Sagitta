@@ -1,0 +1,8 @@
+repos:
+- repo: local
+  hooks:
+    - id: scala-cli-fmt
+      name: scala-cli fmt
+      language: system
+      entry: scala-cli fmt .
+      files: '\.(scala|sc)$'

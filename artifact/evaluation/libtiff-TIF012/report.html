@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCA Report: libtiff TIF0012</title>
+    <style>
+        code {
+            font-family: monospace;
+            background-color: #f0f0f0;
+           
+            &:before, &:after {
+                content: '`';
+            }
+        }
+
+        img {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>RCA Report: libtiff TIF012</h1>
+
+    <details>
+        <summary>Patch</summary>
+        <pre>
+            --- a/libtiff/tif_dir.c
+            +++ b/libtiff/tif_dir.c
+            @@ -117,7 +117,7 @@ setExtraSamples(TIFF* tif, va_list ap, uint32* v)
+                             return 0;
+                     }
+                 }
+            -
+            +#ifdef MAGMA_ENABLE_FIXES
+                     if ( td->td_transferfunction[0] != NULL && (td->td_samplesperpixel - *v > 1) &&
+                             !(td->td_samplesperpixel - td->td_extrasamples > 1))
+                     {
+            @@ -128,6 +128,11 @@ setExtraSamples(TIFF* tif, va_list ap, uint32* v)
+                             _TIFFfree(td->td_transferfunction[0]);
+                             td->td_transferfunction[0] = NULL;
+                     }
+            +#endif
+            +#ifdef MAGMA_ENABLE_CANARIES
+            +        MAGMA_LOG("%MAGMA_BUG%", MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(td->td_samplesperpixel - *v > 1, \
+            +            !(td->td_samplesperpixel - td->td_extrasamples > 1))));
+            +#endif
+             
+                 td->td_extrasamples = (uint16) *v;
+                 _TIFFsetShortArray(&td->td_sampleinfo, va, td->td_extrasamples);
+            @@ -270,6 +275,7 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
+                         goto badvalue;
+                     if( v != td->td_samplesperpixel )
+                     {
+            +#ifdef MAGMA_ENABLE_FIXES
+                         /* See http://bugzilla.maptools.org/show_bug.cgi?id=2500 */
+                         if( td->td_sminsamplevalue != NULL )
+                         {
+            @@ -301,6 +307,13 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
+                                 _TIFFfree(td->td_transferfunction[0]);
+                                 td->td_transferfunction[0] = NULL;
+                         }
+            +#endif
+            +#ifdef MAGMA_ENABLE_CANARIES
+            +            MAGMA_LOG("%MAGMA_BUG%", MAGMA_OR(td->td_sminsamplevalue != NULL, \
+            +                MAGMA_OR(td->td_smaxsamplevalue != NULL, \
+            +                MAGMA_AND(td->td_transferfunction[0] != NULL, MAGMA_AND(v - td->td_extrasamples > 1, \
+            +                   !(td->td_samplesperpixel - td->td_extrasamples > 1))))));
+            +#endif
+                     }
+                     td->td_samplesperpixel = (uint16) v;
+                     break;                           
+        </pre>
+    </details>
+
+    <h1>Canary-based</h1>
+
+    <h2><code>td_extrasamples: _TIFFVSetField</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph._TIFFVSetField.td_extrasamples.000792.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph._TIFFVSetField.td_extrasamples.crash-000044.dot.svg">
+    
+    <h2><code>td_samplesperpixel: _TIFFVSetField</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph._TIFFVSetField.td_samplesperpixel.000792.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph._TIFFVSetField.td_samplesperpixel.crash-000044.dot.svg">
+
+    <h2><code>td_smaxsamplevalue: _TIFFVSetField</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph._TIFFVSetField.td_smaxsamplevalue.000792.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph._TIFFVSetField.td_smaxsamplevalue.crash-000044.dot.svg">
+
+    <h2><code>td_sminsamplevalue: _TIFFVSetField</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph._TIFFVSetField.td_sminsamplevalue.000792.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph._TIFFVSetField.td_sminsamplevalue.crash-000044.dot.svg">
+
+    <h2><code>v: _TIFFVSetField</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph._TIFFVSetField.v.000792.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph._TIFFVSetField.v.crash-000044.dot.svg">
+
+    <!-- <h2><code>td_extrasamples: setExtraSamples</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.setExtraSamples.td_extrasamples.000792.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.setExtraSamples.td_extrasamples.crash-000044.dot.svg">
+
+    <h2><code>td_samplesperpixel: setExtraSamples</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.setExtraSamples.td_samplesperpixel.000792.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.setExtraSamples.td_samplesperpixel.crash-000044.dot.svg">
+
+    <h2><code>td_transferfunction[0]: setExtraSamples</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.setExtraSamples.td_transferfunction_0.000792.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.setExtraSamples.td_transferfunction_0.crash-000044.dot.svg">
+
+    <h2><code>v: setExtraSamples</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.setExtraSamples.v.000792.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.setExtraSamples.v.crash-000044.dot.svg"> -->
+
+    <h1>Canary-based</h1>
+
+    <h2>TODO</h2>
+</body>
+</html>

@@ -1,0 +1,35 @@
+diff --git a/src/os_unix.c b/src/os_unix.c
+index aa6b3b8..3a1a608 100644
+--- a/src/os_unix.c
++++ b/src/os_unix.c
+@@ -95,9 +95,9 @@
+ #include <time.h>
+ #include <sys/time.h>
+ #include <errno.h>
+-#if !defined(SQLITE_OMIT_WAL) || SQLITE_MAX_MMAP_SIZE>0
+-# include <sys/mman.h>
+-#endif
++#define _GNU_SOURCE
++#define __USE_GNU
++#include <sys/mman.h>
+ 
+ #if SQLITE_ENABLE_LOCKING_STYLE
+ # include <sys/ioctl.h>
+@@ -432,7 +432,7 @@ static struct unix_syscall {
+ #define osPread     ((ssize_t(*)(int,void*,size_t,off_t))aSyscall[9].pCurrent)
+ 
+ #if defined(USE_PREAD64)
+-  { "pread64",      (sqlite3_syscall_ptr)pread64,    0  },
++  { "pread64",      (sqlite3_syscall_ptr)pread,    0  },
+ #else
+   { "pread64",      (sqlite3_syscall_ptr)0,          0  },
+ #endif
+@@ -450,7 +450,7 @@ static struct unix_syscall {
+                     aSyscall[12].pCurrent)
+ 
+ #if defined(USE_PREAD64)
+-  { "pwrite64",     (sqlite3_syscall_ptr)pwrite64,   0  },
++  { "pwrite64",     (sqlite3_syscall_ptr)pwrite,   0  },
+ #else
+   { "pwrite64",     (sqlite3_syscall_ptr)0,          0  },
+ #endif

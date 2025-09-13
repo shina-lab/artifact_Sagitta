@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCA Report: libpng PNG003</title>
+    <style>
+        code {
+            font-family: monospace;
+            background-color: #f0f0f0;
+           
+            &:before, &:after {
+                content: '`';
+            }
+        }
+
+        img {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>RCA Report: libpng PNG003</h1>
+
+    <details>
+        <summary>Patch</summary>
+        <pre>
+            @@ -984,8 +984,14 @@ png_handle_PLTE(png_structrp png_ptr, png_inforp info_ptr, png_uint_32 length)
+            else
+               max_palette_length = PNG_MAX_PALETTE_LENGTH;
+         
+        +#ifdef MAGMA_ENABLE_FIXES
+            if (num > max_palette_length)
+               num = max_palette_length;
+        +#endif
+        +
+        +#ifdef MAGMA_ENABLE_CANARIES
+        +   MAGMA_LOG("%MAGMA_BUG%", num > max_palette_length);
+        +#endif
+         
+         #ifdef PNG_POINTER_INDEXING_SUPPORTED
+            for (i = 0, pal_ptr = palette; i < num; i++, pal_ptr++)
+        </pre>
+    </details>
+
+    <h1>Canary-based</h1>
+
+    <h2><code>num</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.num.000342.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.num.crash-000005.svg">
+
+    <h2><code>max_palette_length</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.max_palette_length.000342.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.max_palette_length.crash-000005.svg">
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+diff --git a/poppler/Dict.cc b/poppler/Dict.cc
+index 222257d3..27089af2 100644
+--- a/poppler/Dict.cc
++++ b/poppler/Dict.cc
+@@ -133,6 +133,7 @@ void Dict::remove(const char *key)
+             const auto index = entry - &entries.front();
+             entries.erase(entries.begin() + index);
+         } else {
++            using std::swap;
+             swap(*entry, entries.back());
+             entries.pop_back();
+         }
+
+diff --git a/poppler/FlateEncoder.cc b/poppler/FlateEncoder.cc
+index 316e531e..4bf2a86c 100644
+--- a/poppler/FlateEncoder.cc
++++ b/poppler/FlateEncoder.cc
+@@ -24,9 +24,9 @@ FlateEncoder::FlateEncoder(Stream *strA) : FilterStream(strA)
+     outBufPtr = outBufEnd = outBuf;
+     inBufEof = outBufEof = false;
+
+-    zlib_stream.zalloc = Z_NULL;
+-    zlib_stream.zfree = Z_NULL;
+-    zlib_stream.opaque = Z_NULL;
++    zlib_stream.zalloc = NULL;
++    zlib_stream.zfree = NULL;
++    zlib_stream.opaque = NULL;
+
+     zlib_status = deflateInit(&zlib_stream, Z_DEFAULT_COMPRESSION);

@@ -1,0 +1,77 @@
+
+diff --git a/poppler/Object.h b/poppler/Object.h
+index 70c5c3ef..39e0bb7d 100644
+--- a/poppler/Object.h
++++ b/poppler/Object.h
+@@ -420,6 +420,7 @@ public:
+     }
+     Stream *getStream() const
+     {
++        if (type == objStream) {}
+         OBJECT_TYPE_CHECK(objStream);
+         return stream;
+     }
+
+diff --git a/poppler/Object.cc b/poppler/Object.cc
+index 17d22c6b..a9cc80c4 100644
+--- a/poppler/Object.cc
++++ b/poppler/Object.cc
+@@ -309,6 +309,7 @@ const Object &Object::dictGetValNF(int i) const
+
+ void Object::streamReset()
+ {
++    if (type == objStream) {}
+     OBJECT_TYPE_CHECK(objStream);
+     stream->reset();
+ }
+
+diff --git a/poppler/Lexer.h b/poppler/Lexer.h
+index 3efa9c87..be46bbcd 100644
+--- a/poppler/Lexer.h
++++ b/poppler/Lexer.h
+@@ -52,8 +52,8 @@ public:
+     // Destructor.
+     ~Lexer();
+
+-    Lexer(const Lexer &) = delete;
+-    Lexer &operator=(const Lexer &) = delete;
++    Lexer(const Lexer &) = default;
++    Lexer &operator=(const Lexer &) = default;
+
+     // Get the next object from the input stream.
+     Object getObj(int objNum = -1);
+diff --git a/poppler/Object.h b/poppler/Object.h
+index 39e0bb7d..3ba7d09b 100644
+--- a/poppler/Object.h
++++ b/poppler/Object.h
+@@ -229,8 +229,8 @@ public:
+         return *this;
+     }
+
+-    Object &operator=(const Object &other) = delete;
+-    Object(const Object &other) = delete;
++    Object &operator=(const Object &other) = default;
++    Object(const Object &other) = default;
+
+     // Set object to null.
+     void setToNull()
+diff --git a/poppler/Parser.cc b/poppler/Parser.cc
+index 03cec1dc..8555037e 100644
+--- a/poppler/Parser.cc
++++ b/poppler/Parser.cc
+@@ -46,6 +46,7 @@
+
+ Parser::Parser(XRef *xrefA, Stream *streamA, bool allowStreamsA) : lexer { xrefA, streamA }
+ {
++    lexer = std::move(Lexer(xrefA, streamA));
+     allowStreams = allowStreamsA;
+     buf1 = lexer.getObj();
+     buf2 = lexer.getObj();
+@@ -54,6 +55,7 @@ Parser::Parser(XRef *xrefA, Stream *streamA, bool allowStreamsA) : lexer { xrefA
+
+ Parser::Parser(XRef *xrefA, Object *objectA, bool allowStreamsA) : lexer { xrefA, objectA }
+ {
++    lexer = std::move(Lexer(xrefA, objectA));
+     allowStreams = allowStreamsA;
+     buf1 = lexer.getObj();
+     buf2 = lexer.getObj();

@@ -1,0 +1,1045 @@
+commit dcb135fb17363fb2f733052e83920a5c90475114
+Author: K_atc <shiftx1026@gmail.com>
+Date:   Sun Mar 19 19:11:46 2023 +0900
+
+    Fix missing include headers
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b060ff20..37c16dc5 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -636,6 +636,7 @@ if(ENABLE_UNSTABLE_API_ABI_HEADERS)
+     poppler/ProfileData.h
+     poppler/PreScanOutputDev.h
+     poppler/PSTokenizer.h
++    poppler/Ref.h
+     poppler/Rendition.h
+     poppler/CertificateInfo.h
+     poppler/Stream-CCITT.h
+diff --git a/cpp/poppler-embedded-file-private.h b/cpp/poppler-embedded-file-private.h
+index 55e7270a..a1bced3b 100644
+--- a/cpp/poppler-embedded-file-private.h
++++ b/cpp/poppler-embedded-file-private.h
+@@ -20,6 +20,8 @@
+ #ifndef POPPLER_EMBEDDED_FILE_PRIVATE_H
+ #define POPPLER_EMBEDDED_FILE_PRIVATE_H
+ 
++#include "poppler-embedded-file.h"
++
+ class FileSpec;
+ 
+ namespace poppler {
+diff --git a/goo/gdir.h b/goo/gdir.h
+index a042a3fc..b9bdb357 100644
+--- a/goo/gdir.h
++++ b/goo/gdir.h
+@@ -37,6 +37,10 @@
+ 
+ #include "poppler-config.h"
+ 
++#if !defined(_WIN32)
++    #include <dirent.h>
++#endif
++
+ class GooString;
+ 
+ //------------------------------------------------------------------------
+diff --git a/poppler/Annot.cc b/poppler/Annot.cc
+index 9f19e22f..6567ac8c 100644
+--- a/poppler/Annot.cc
++++ b/poppler/Annot.cc
+@@ -65,6 +65,7 @@
+ #include "goo/gstrtod.h"
+ #include "Error.h"
+ #include "Object.h"
++#include "Array.h"
+ #include "Catalog.h"
+ #include "Gfx.h"
+ #include "Lexer.h"
+diff --git a/poppler/Array.cc b/poppler/Array.cc
+index a8df2d72..a51a77cf 100644
+--- a/poppler/Array.cc
++++ b/poppler/Array.cc
+@@ -46,6 +46,11 @@ Array::Array(XRef *xrefA)
+ 
+ Array::~Array() { }
+ 
++int Array::getLength() const
++{
++    return elems.size();
++}
++
+ Array *Array::copy(XRef *xrefA) const
+ {
+     arrayLocker();
+diff --git a/poppler/Array.h b/poppler/Array.h
+index 782ef725..a1a9bbef 100644
+--- a/poppler/Array.h
++++ b/poppler/Array.h
+@@ -34,9 +34,11 @@
+ 
+ #include "poppler-config.h"
+ #include "poppler_private_export.h"
+-#include "Object.h"
++#include "Ref.h"
+ 
+ class XRef;
++class Object;
++class GooString;
+ 
+ //------------------------------------------------------------------------
+ // Array
+@@ -55,7 +57,7 @@ public:
+     Array &operator=(const Array &) = delete;
+ 
+     // Get number of elements.
+-    int getLength() const { return elems.size(); }
++    int getLength() const;
+ 
+     // Copy array with new xref
+     Array *copy(XRef *xrefA) const;
+diff --git a/poppler/BuiltinFont.h b/poppler/BuiltinFont.h
+index 8ed03058..a0530165 100644
+--- a/poppler/BuiltinFont.h
++++ b/poppler/BuiltinFont.h
+@@ -24,6 +24,9 @@
+ #define BUILTINFONT_H
+ 
+ #include "BuiltinFontWidth.h"
++#include "FontEncodingTables.h"
++#include <sys/types.h>
++#include <string.h>
+ 
+ //------------------------------------------------------------------------
+ 
+diff --git a/poppler/CMap.cc b/poppler/CMap.cc
+index 28c0c818..94fa8ab8 100644
+--- a/poppler/CMap.cc
++++ b/poppler/CMap.cc
+@@ -39,6 +39,7 @@
+ #include "PSTokenizer.h"
+ #include "CMap.h"
+ #include "Object.h"
++#include "Stream.h"
+ 
+ //------------------------------------------------------------------------
+ 
+diff --git a/poppler/CairoRescaleBox.h b/poppler/CairoRescaleBox.h
+index 2766d483..e37fe1d8 100644
+--- a/poppler/CairoRescaleBox.h
++++ b/poppler/CairoRescaleBox.h
+@@ -41,6 +41,7 @@
+ #define CAIRO_RESCALE_BOX_H
+ 
+ #include <cairo.h>
++#include <stdint.h>
+ 
+ class CairoRescaleBox
+ {
+diff --git a/poppler/Catalog.h b/poppler/Catalog.h
+index 6d568b75..76c73973 100644
+--- a/poppler/Catalog.h
++++ b/poppler/Catalog.h
+@@ -48,6 +48,7 @@
+ 
+ #include <vector>
+ #include <memory>
++#include <mutex>
+ 
+ class PDFDoc;
+ class XRef;
+diff --git a/poppler/Dict.cc b/poppler/Dict.cc
+index 222257d3..5f5041e2 100644
+--- a/poppler/Dict.cc
++++ b/poppler/Dict.cc
+@@ -85,6 +85,11 @@ Dict *Dict::copy(XRef *xrefA) const
+     return dictA;
+ }
+ 
++int Dict::getLength() const
++{
++    return static_cast<int>(entries.size());
++}
++
+ void Dict::add(const char *key, Object &&val)
+ {
+     dictLocker();
+@@ -219,6 +224,11 @@ bool Dict::lookupInt(const char *key, const char *alt_key, int *value) const
+     return false;
+ }
+ 
++const char *Dict::getKey(int i) const
++{
++    return entries[i].first.c_str();
++}
++
+ Object Dict::getVal(int i, Ref *returnRef) const
+ {
+     const DictEntry &entry = entries[i];
+@@ -230,7 +240,17 @@ Object Dict::getVal(int i, Ref *returnRef) const
+     return entry.second.fetch(xref);
+ }
+ 
++const Object &Dict::getValNF(int i) const
++{
++    return entries[i].second;
++}
++
+ bool Dict::hasKey(const char *key) const
+ {
+     return find(key) != nullptr;
+ }
++
++Object Dict::getVal(int i) const
++{ 
++    return entries[i].second.fetch(xref); 
++}
+diff --git a/poppler/Dict.h b/poppler/Dict.h
+index fb9af6c0..90f4000d 100644
+--- a/poppler/Dict.h
++++ b/poppler/Dict.h
+@@ -38,7 +38,10 @@
+ 
+ #include "poppler-config.h"
+ #include "poppler_private_export.h"
+-#include "Object.h"
++#include "Ref.h"
++
++class Object;
++class XRef;
+ 
+ //------------------------------------------------------------------------
+ // Dict
+@@ -56,7 +59,7 @@ public:
+     Dict &operator=(const Dict &) = delete;
+ 
+     // Get number of entries.
+-    int getLength() const { return static_cast<int>(entries.size()); }
++    int getLength() const;
+ 
+     // Add an entry. (Copies key into Dict.)
+     // val becomes a dead object after the call
+@@ -86,11 +89,11 @@ public:
+     bool lookupInt(const char *key, const char *alt_key, int *value) const;
+ 
+     // Iterative accessors.
+-    const char *getKey(int i) const { return entries[i].first.c_str(); }
+-    Object getVal(int i) const { return entries[i].second.fetch(xref); }
++    const char *getKey(int i) const;
++    Object getVal(int i) const;
+     // Same as above but if the returned object is a fetched Ref returns such Ref in returnRef, otherwise returnRef is Ref::INVALID()
+     Object getVal(int i, Ref *returnRef) const;
+-    const Object &getValNF(int i) const { return entries[i].second; }
++    const Object &getValNF(int i) const;
+ 
+     // Set the xref pointer.  This is only used in one special case: the
+     // trailer dictionary, which is read before the xref table is
+diff --git a/poppler/FontInfo.h b/poppler/FontInfo.h
+index 85279859..04b81b70 100644
+--- a/poppler/FontInfo.h
++++ b/poppler/FontInfo.h
+@@ -28,8 +28,11 @@
+ #define FONT_INFO_H
+ 
+ #include "Object.h"
++#include "Ref.h"
++#include "PDFDoc.h"
+ #include "poppler_private_export.h"
+ 
++#include <vector>
+ #include <unordered_set>
+ 
+ class GfxFont;
+diff --git a/poppler/Function.cc b/poppler/Function.cc
+index 4b99178e..e485539d 100644
+--- a/poppler/Function.cc
++++ b/poppler/Function.cc
+@@ -37,6 +37,7 @@
+ #include "Object.h"
+ #include "Dict.h"
+ #include "Stream.h"
++#include "Array.h"
+ #include "Error.h"
+ #include "Function.h"
+ 
+diff --git a/poppler/GfxFont.cc b/poppler/GfxFont.cc
+index 77dc338b..693fc463 100644
+--- a/poppler/GfxFont.cc
++++ b/poppler/GfxFont.cc
+@@ -54,6 +54,7 @@
+ #include "Error.h"
+ #include "Object.h"
+ #include "Dict.h"
++#include "Stream.h"
+ #include "GlobalParams.h"
+ #include "CMap.h"
+ #include "CharCodeToUnicode.h"
+diff --git a/poppler/GfxState.cc b/poppler/GfxState.cc
+index 4b0d6796..a8ba8767 100644
+--- a/poppler/GfxState.cc
++++ b/poppler/GfxState.cc
+@@ -54,6 +54,7 @@
+ #include "Error.h"
+ #include "Object.h"
+ #include "Array.h"
++#include "Dict.h"
+ #include "Page.h"
+ #include "Gfx.h"
+ #include "GfxState.h"
+diff --git a/poppler/GfxState.h b/poppler/GfxState.h
+index 5aeb6e24..f926df3b 100644
+--- a/poppler/GfxState.h
++++ b/poppler/GfxState.h
+@@ -39,6 +39,7 @@
+ #include "poppler_private_export.h"
+ 
+ #include "Object.h"
++#include "Stream.h"
+ #include "Function.h"
+ 
+ #include <cassert>
+diff --git a/poppler/JBIG2Stream.h b/poppler/JBIG2Stream.h
+index af63a673..4aa09b89 100644
+--- a/poppler/JBIG2Stream.h
++++ b/poppler/JBIG2Stream.h
+@@ -31,6 +31,9 @@
+ 
+ #include "Object.h"
+ #include "Stream.h"
++#include "goo/gfile.h"
++#include <vector>
++#include <memory>
+ 
+ class JBIG2Segment;
+ class JBIG2Bitmap;
+@@ -39,6 +42,7 @@ class JArithmeticDecoderStats;
+ class JBIG2HuffmanDecoder;
+ struct JBIG2HuffmanTable;
+ class JBIG2MMRDecoder;
++class GooString;
+ 
+ //------------------------------------------------------------------------
+ 
+diff --git a/poppler/Lexer.cc b/poppler/Lexer.cc
+index 34a190da..f32aa495 100644
+--- a/poppler/Lexer.cc
++++ b/poppler/Lexer.cc
+@@ -34,6 +34,7 @@
+ #include "Lexer.h"
+ #include "Error.h"
+ #include "XRef.h"
++#include "Array.h"
+ 
+ //------------------------------------------------------------------------
+ 
+diff --git a/poppler/Link.cc b/poppler/Link.cc
+index a4f05f3d..f04ab771 100644
+--- a/poppler/Link.cc
++++ b/poppler/Link.cc
+@@ -41,6 +41,7 @@
+ #include "Object.h"
+ #include "Array.h"
+ #include "Dict.h"
++#include "Stream.h"
+ #include "Link.h"
+ #include "Sound.h"
+ #include "FileSpec.h"
+diff --git a/poppler/Link.h b/poppler/Link.h
+index 63803b60..2c79ae91 100644
+--- a/poppler/Link.h
++++ b/poppler/Link.h
+@@ -36,6 +36,7 @@
+ #include "poppler_private_export.h"
+ #include <memory>
+ #include <set>
++#include <vector>
+ 
+ class GooString;
+ class Array;
+diff --git a/poppler/Movie.cc b/poppler/Movie.cc
+index e8047b8e..95e6ec1a 100644
+--- a/poppler/Movie.cc
++++ b/poppler/Movie.cc
+@@ -25,6 +25,7 @@
+ //*********************************************************************************
+ 
+ #include <cmath>
++#include "Array.h"
+ #include "Movie.h"
+ #include "FileSpec.h"
+ 
+diff --git a/poppler/Object.cc b/poppler/Object.cc
+index 49ddfbf5..17d22c6b 100644
+--- a/poppler/Object.cc
++++ b/poppler/Object.cc
+@@ -193,3 +193,146 @@ void Object::print(FILE *f) const
+         break;
+     }
+ }
++
++//------------------------------------------------------------------------
++// Array accessors.
++//------------------------------------------------------------------------
++
++#include "Array.h"
++
++int Object::arrayGetLength() const
++{
++    OBJECT_TYPE_CHECK(objArray);
++    return array->getLength();
++}
++
++void Object::arrayAdd(Object &&elem)
++{
++    OBJECT_TYPE_CHECK(objArray);
++    array->add(std::move(elem));
++}
++
++void Object::arrayRemove(int i)
++{
++    OBJECT_TYPE_CHECK(objArray);
++    array->remove(i);
++}
++
++Object Object::arrayGet(int i, int recursion) const
++{
++    OBJECT_TYPE_CHECK(objArray);
++    return array->get(i, recursion);
++}
++
++const Object &Object::arrayGetNF(int i) const
++{
++    OBJECT_TYPE_CHECK(objArray);
++    return array->getNF(i);
++}
++
++//------------------------------------------------------------------------
++// Dict accessors.
++//------------------------------------------------------------------------
++
++#include "Dict.h"
++
++int Object::dictGetLength() const
++{
++    OBJECT_TYPE_CHECK(objDict);
++    return dict->getLength();
++}
++
++void Object::dictAdd(const char *key, Object &&val)
++{
++    OBJECT_TYPE_CHECK(objDict);
++    dict->add(key, std::move(val));
++}
++
++void Object::dictSet(const char *key, Object &&val)
++{
++    OBJECT_TYPE_CHECK(objDict);
++    dict->set(key, std::move(val));
++}
++
++void Object::dictRemove(const char *key)
++{
++    OBJECT_TYPE_CHECK(objDict);
++    dict->remove(key);
++}
++
++bool Object::dictIs(const char *dictType) const
++{
++    OBJECT_TYPE_CHECK(objDict);
++    return dict->is(dictType);
++}
++
++bool Object::isDict(const char *dictType) const
++{
++    return type == objDict && dictIs(dictType);
++}
++
++Object Object::dictLookup(const char *key, int recursion) const
++{
++    OBJECT_TYPE_CHECK(objDict);
++    return dict->lookup(key, recursion);
++}
++
++const Object &Object::dictLookupNF(const char *key) const
++{
++    OBJECT_TYPE_CHECK(objDict);
++    return dict->lookupNF(key);
++}
++
++const char *Object::dictGetKey(int i) const
++{
++    OBJECT_TYPE_CHECK(objDict);
++    return dict->getKey(i);
++}
++
++Object Object::dictGetVal(int i) const
++{
++    OBJECT_TYPE_CHECK(objDict);
++    return dict->getVal(i);
++}
++
++const Object &Object::dictGetValNF(int i) const
++{
++    OBJECT_TYPE_CHECK(objDict);
++    return dict->getValNF(i);
++}
++
++//------------------------------------------------------------------------
++// Stream accessors.
++//------------------------------------------------------------------------
++
++#include "Stream.h"
++
++void Object::streamReset()
++{
++    OBJECT_TYPE_CHECK(objStream);
++    stream->reset();
++}
++
++void Object::streamClose()
++{
++    OBJECT_TYPE_CHECK(objStream);
++    stream->close();
++}
++
++int Object::streamGetChar()
++{
++    OBJECT_TYPE_CHECK(objStream);
++    return stream->getChar();
++}
++
++int Object::streamGetChars(int nChars, unsigned char *buffer)
++{
++    OBJECT_TYPE_CHECK(objStream);
++    return stream->doGetChars(nChars, buffer);
++}
++
++Dict *Object::streamGetDict() const
++{
++    OBJECT_TYPE_CHECK(objStream);
++    return stream->getDict();
++}
+\ No newline at end of file
+diff --git a/poppler/Object.h b/poppler/Object.h
+index 1ce75211..70c5c3ef 100644
+--- a/poppler/Object.h
++++ b/poppler/Object.h
+@@ -86,31 +86,7 @@ class Stream;
+ //------------------------------------------------------------------------
+ // Ref
+ //------------------------------------------------------------------------
+-
+-struct Ref
+-{
+-    int num; // object number
+-    int gen; // generation number
+-
+-    static constexpr Ref INVALID() { return { -1, -1 }; };
+-};
+-
+-inline bool operator==(const Ref lhs, const Ref rhs) noexcept
+-{
+-    return lhs.num == rhs.num && lhs.gen == rhs.gen;
+-}
+-
+-inline bool operator!=(const Ref lhs, const Ref rhs) noexcept
+-{
+-    return lhs.num != rhs.num || lhs.gen != rhs.gen;
+-}
+-
+-inline bool operator<(const Ref lhs, const Ref rhs) noexcept
+-{
+-    if (lhs.num != rhs.num)
+-        return lhs.num < rhs.num;
+-    return lhs.gen < rhs.gen;
+-}
++#include "Ref.h"
+ 
+ namespace std {
+ 
+@@ -482,7 +458,7 @@ public:
+     int arrayGetLength() const;
+     void arrayAdd(Object &&elem);
+     void arrayRemove(int i);
+-    Object arrayGet(int i, int recursion) const;
++    Object arrayGet(int i, int recursion = 0) const;
+     const Object &arrayGetNF(int i) const;
+ 
+     // Dict accessors.
+@@ -539,147 +515,4 @@ private:
+     };
+ };
+ 
+-//------------------------------------------------------------------------
+-// Array accessors.
+-//------------------------------------------------------------------------
+-
+-#include "Array.h"
+-
+-inline int Object::arrayGetLength() const
+-{
+-    OBJECT_TYPE_CHECK(objArray);
+-    return array->getLength();
+-}
+-
+-inline void Object::arrayAdd(Object &&elem)
+-{
+-    OBJECT_TYPE_CHECK(objArray);
+-    array->add(std::move(elem));
+-}
+-
+-inline void Object::arrayRemove(int i)
+-{
+-    OBJECT_TYPE_CHECK(objArray);
+-    array->remove(i);
+-}
+-
+-inline Object Object::arrayGet(int i, int recursion = 0) const
+-{
+-    OBJECT_TYPE_CHECK(objArray);
+-    return array->get(i, recursion);
+-}
+-
+-inline const Object &Object::arrayGetNF(int i) const
+-{
+-    OBJECT_TYPE_CHECK(objArray);
+-    return array->getNF(i);
+-}
+-
+-//------------------------------------------------------------------------
+-// Dict accessors.
+-//------------------------------------------------------------------------
+-
+-#include "Dict.h"
+-
+-inline int Object::dictGetLength() const
+-{
+-    OBJECT_TYPE_CHECK(objDict);
+-    return dict->getLength();
+-}
+-
+-inline void Object::dictAdd(const char *key, Object &&val)
+-{
+-    OBJECT_TYPE_CHECK(objDict);
+-    dict->add(key, std::move(val));
+-}
+-
+-inline void Object::dictSet(const char *key, Object &&val)
+-{
+-    OBJECT_TYPE_CHECK(objDict);
+-    dict->set(key, std::move(val));
+-}
+-
+-inline void Object::dictRemove(const char *key)
+-{
+-    OBJECT_TYPE_CHECK(objDict);
+-    dict->remove(key);
+-}
+-
+-inline bool Object::dictIs(const char *dictType) const
+-{
+-    OBJECT_TYPE_CHECK(objDict);
+-    return dict->is(dictType);
+-}
+-
+-inline bool Object::isDict(const char *dictType) const
+-{
+-    return type == objDict && dictIs(dictType);
+-}
+-
+-inline Object Object::dictLookup(const char *key, int recursion) const
+-{
+-    OBJECT_TYPE_CHECK(objDict);
+-    return dict->lookup(key, recursion);
+-}
+-
+-inline const Object &Object::dictLookupNF(const char *key) const
+-{
+-    OBJECT_TYPE_CHECK(objDict);
+-    return dict->lookupNF(key);
+-}
+-
+-inline const char *Object::dictGetKey(int i) const
+-{
+-    OBJECT_TYPE_CHECK(objDict);
+-    return dict->getKey(i);
+-}
+-
+-inline Object Object::dictGetVal(int i) const
+-{
+-    OBJECT_TYPE_CHECK(objDict);
+-    return dict->getVal(i);
+-}
+-
+-inline const Object &Object::dictGetValNF(int i) const
+-{
+-    OBJECT_TYPE_CHECK(objDict);
+-    return dict->getValNF(i);
+-}
+-
+-//------------------------------------------------------------------------
+-// Stream accessors.
+-//------------------------------------------------------------------------
+-
+-#include "Stream.h"
+-
+-inline void Object::streamReset()
+-{
+-    OBJECT_TYPE_CHECK(objStream);
+-    stream->reset();
+-}
+-
+-inline void Object::streamClose()
+-{
+-    OBJECT_TYPE_CHECK(objStream);
+-    stream->close();
+-}
+-
+-inline int Object::streamGetChar()
+-{
+-    OBJECT_TYPE_CHECK(objStream);
+-    return stream->getChar();
+-}
+-
+-inline int Object::streamGetChars(int nChars, unsigned char *buffer)
+-{
+-    OBJECT_TYPE_CHECK(objStream);
+-    return stream->doGetChars(nChars, buffer);
+-}
+-
+-inline Dict *Object::streamGetDict() const
+-{
+-    OBJECT_TYPE_CHECK(objStream);
+-    return stream->getDict();
+-}
+-
+ #endif
+diff --git a/poppler/OptionalContent.cc b/poppler/OptionalContent.cc
+index 899f600a..3b0ba227 100644
+--- a/poppler/OptionalContent.cc
++++ b/poppler/OptionalContent.cc
+@@ -19,6 +19,7 @@
+ #include "goo/gmem.h"
+ #include "goo/GooString.h"
+ #include "Error.h"
++#include "Array.h"
+ #include "OptionalContent.h"
+ 
+ // Max depth of nested visibility expressions.  This is used to catch
+diff --git a/poppler/OptionalContent.h b/poppler/OptionalContent.h
+index 3ab5f646..78924812 100644
+--- a/poppler/OptionalContent.h
++++ b/poppler/OptionalContent.h
+@@ -15,6 +15,7 @@
+ #ifndef OPTIONALCONTENT_H
+ #define OPTIONALCONTENT_H
+ 
++#include "XRef.h"
+ #include "Object.h"
+ #include "CharTypes.h"
+ #include "poppler_private_export.h"
+@@ -22,7 +23,7 @@
+ #include <memory>
+ 
+ class GooString;
+-class XRef;
++// class XRef;
+ 
+ class OptionalContentGroup;
+ 
+diff --git a/poppler/Outline.cc b/poppler/Outline.cc
+index aa6b4ef9..22884dba 100644
+--- a/poppler/Outline.cc
++++ b/poppler/Outline.cc
+@@ -34,6 +34,7 @@
+ #include "goo/GooString.h"
+ #include "PDFDoc.h"
+ #include "XRef.h"
++#include "Array.h"
+ #include "Link.h"
+ #include "PDFDocEncoding.h"
+ #include "Outline.h"
+diff --git a/poppler/Outline.h b/poppler/Outline.h
+index 9fc85e24..721f9e03 100644
+--- a/poppler/Outline.h
++++ b/poppler/Outline.h
+@@ -27,6 +27,7 @@
+ #define OUTLINE_H
+ 
+ #include <memory>
++#include <vector>
+ #include "Object.h"
+ #include "CharTypes.h"
+ #include "poppler_private_export.h"
+diff --git a/poppler/PDFDoc.cc b/poppler/PDFDoc.cc
+index 7646fb89..d82da553 100644
+--- a/poppler/PDFDoc.cc
++++ b/poppler/PDFDoc.cc
+@@ -77,6 +77,7 @@
+ #include "GlobalParams.h"
+ #include "Page.h"
+ #include "Catalog.h"
++#include "Array.h"
+ #include "Stream.h"
+ #include "XRef.h"
+ #include "Linearization.h"
+diff --git a/poppler/PDFDoc.h b/poppler/PDFDoc.h
+index a2d0098b..176f3de7 100644
+--- a/poppler/PDFDoc.h
++++ b/poppler/PDFDoc.h
+@@ -59,7 +59,7 @@
+ 
+ class GooString;
+ class GooFile;
+-class BaseStream;
++// class BaseStream;
+ class OutputDev;
+ class Links;
+ class LinkAction;
+diff --git a/poppler/Page.h b/poppler/Page.h
+index 228e31e2..10367757 100644
+--- a/poppler/Page.h
++++ b/poppler/Page.h
+@@ -35,6 +35,7 @@
+ #ifndef PAGE_H
+ #define PAGE_H
+ 
++#include <vector>
+ #include <memory>
+ #include <mutex>
+ 
+diff --git a/poppler/PageLabelInfo.cc b/poppler/PageLabelInfo.cc
+index be4f8fbe..1f873d51 100644
+--- a/poppler/PageLabelInfo.cc
++++ b/poppler/PageLabelInfo.cc
+@@ -21,6 +21,7 @@
+ 
+ #include <algorithm>
+ 
++#include "Array.h"
+ #include "PageLabelInfo.h"
+ #include "PageLabelInfo_p.h"
+ 
+diff --git a/poppler/PageTransition.h b/poppler/PageTransition.h
+index 0e0a8510..76c432f6 100644
+--- a/poppler/PageTransition.h
++++ b/poppler/PageTransition.h
+@@ -22,6 +22,7 @@
+ #define PAGE_TRANSITION_H
+ 
+ #include "Object.h"
++#include "Dict.h"
+ 
+ //------------------------------------------------------------------------
+ // PageTransition
+diff --git a/poppler/Ref.h b/poppler/Ref.h
+new file mode 100644
+index 00000000..ba71e17b
+--- /dev/null
++++ b/poppler/Ref.h
+@@ -0,0 +1,29 @@
++#ifndef REF_H
++#define REF_H
++
++struct Ref
++{
++    int num; // object number
++    int gen; // generation number
++
++    static constexpr Ref INVALID() { return { -1, -1 }; };
++};
++
++inline bool operator==(const Ref lhs, const Ref rhs) noexcept
++{
++    return lhs.num == rhs.num && lhs.gen == rhs.gen;
++}
++
++inline bool operator!=(const Ref lhs, const Ref rhs) noexcept
++{
++    return lhs.num != rhs.num || lhs.gen != rhs.gen;
++}
++
++inline bool operator<(const Ref lhs, const Ref rhs) noexcept
++{
++    if (lhs.num != rhs.num)
++        return lhs.num < rhs.num;
++    return lhs.gen < rhs.gen;
++}
++
++#endif
+\ No newline at end of file
+diff --git a/poppler/Rendition.cc b/poppler/Rendition.cc
+index 01526187..eca4e76f 100644
+--- a/poppler/Rendition.cc
++++ b/poppler/Rendition.cc
+@@ -25,6 +25,7 @@
+ //*********************************************************************************
+ 
+ #include <cmath>
++#include "Array.h"
+ #include "Rendition.h"
+ #include "FileSpec.h"
+ 
+diff --git a/poppler/SecurityHandler.h b/poppler/SecurityHandler.h
+index 13cf1ed1..1469fc96 100644
+--- a/poppler/SecurityHandler.h
++++ b/poppler/SecurityHandler.h
+@@ -26,6 +26,7 @@
+ #include "poppler-config.h"
+ 
+ #include "Object.h"
++#include "Stream.h"
+ 
+ class GooString;
+ class PDFDoc;
+diff --git a/poppler/Sound.h b/poppler/Sound.h
+index ee34b77e..10201760 100644
+--- a/poppler/Sound.h
++++ b/poppler/Sound.h
+@@ -21,10 +21,13 @@
+ #ifndef Sound_H
+ #define Sound_H
+ 
++#include "poppler_private_export.h"
++#include "Object.h"
+ #include <memory>
++#include <string>
+ 
+-class Object;
+-class Stream;
++// class Object;
++// class Stream;
+ 
+ //------------------------------------------------------------------------
+ 
+diff --git a/poppler/SplashOutputDev.cc b/poppler/SplashOutputDev.cc
+index 3fd590b8..b4d268cc 100644
+--- a/poppler/SplashOutputDev.cc
++++ b/poppler/SplashOutputDev.cc
+@@ -57,6 +57,7 @@
+ #include "GlobalParams.h"
+ #include "Error.h"
+ #include "Object.h"
++#include "Array.h"
+ #include "Gfx.h"
+ #include "GfxFont.h"
+ #include "Page.h"
+diff --git a/poppler/Stream.h b/poppler/Stream.h
+index b839f7c2..abb06941 100644
+--- a/poppler/Stream.h
++++ b/poppler/Stream.h
+@@ -45,7 +45,12 @@
+ 
+ #include "poppler-config.h"
+ #include "poppler_private_export.h"
++#include "goo/gfile.h"
++#include "goo/GooString.h"
++#include "goo/GooLikely.h"
++#include "goo/gmem.h"
+ #include "Object.h"
++#include "Dict.h"
+ 
+ class GooFile;
+ class BaseStream;
+diff --git a/poppler/UnicodeCClassTables.h b/poppler/UnicodeCClassTables.h
+index 88d119bc..4a90f276 100644
+--- a/poppler/UnicodeCClassTables.h
++++ b/poppler/UnicodeCClassTables.h
+@@ -5,6 +5,8 @@
+ // Can be regenerated from gen-unicode-tables.pl, also in GLib, with relevant
+ // Unicode data tables from ftp.unicode.org.
+ 
++#include "UnicodeTypeTable.h"
++
+ static const Unicode cclass_data[][256] = {
+     { /* page 3, index 0 */
+       230, 230, 230, 230, 230, 230, 230, 230, 230, 230, 230, 230, 230, 230, 230, 230, 230, 230, 230, 230, 230, 232, 220, 220, 220, 220, 232, 216, 220, 220, 220, 220, 220, 202, 202, 220, 220, 220, 220, 202, 202, 220, 220,
+diff --git a/poppler/UnicodeCompTables.h b/poppler/UnicodeCompTables.h
+index f74ffcd0..77d8818e 100644
+--- a/poppler/UnicodeCompTables.h
++++ b/poppler/UnicodeCompTables.h
+@@ -5,6 +5,8 @@
+ // Can be regenerated from gen-unicode-tables.pl, also in GLib, with relevant
+ // Unicode data tables from ftp.unicode.org.
+ 
++#include "UnicodeTypeTable.h"
++
+ #define COMPOSE_FIRST_START 1
+ #define COMPOSE_FIRST_SINGLE_START 147
+ #define COMPOSE_SECOND_START 357
+diff --git a/poppler/UnicodeMapTables.h b/poppler/UnicodeMapTables.h
+index 7c89feb2..f4ae02ff 100644
+--- a/poppler/UnicodeMapTables.h
++++ b/poppler/UnicodeMapTables.h
+@@ -20,6 +20,8 @@
+ //
+ //========================================================================
+ 
++#include "UnicodeMap.h"
++
+ static const UnicodeMapRange latin1UnicodeMapRanges[] = {
+     { 0x000a, 0x000a, 0x0a, 1 },     { 0x000c, 0x000d, 0x0c, 1 },     { 0x0020, 0x007e, 0x20, 1 },     { 0x00a0, 0x00a0, 0x20, 1 },  { 0x00a1, 0x00ac, 0xa1, 1 },   { 0x00ae, 0x00ff, 0xae, 1 },   { 0x010c, 0x010c, 0x43, 1 },
+     { 0x010d, 0x010d, 0x63, 1 },     { 0x0131, 0x0131, 0x69, 1 },     { 0x0141, 0x0141, 0x4c, 1 },     { 0x0142, 0x0142, 0x6c, 1 },  { 0x0152, 0x0152, 0x4f45, 2 }, { 0x0153, 0x0153, 0x6f65, 2 }, { 0x0160, 0x0160, 0x53, 1 },
+diff --git a/poppler/UnicodeTypeTable.h b/poppler/UnicodeTypeTable.h
+index 85d88d62..5ef653a9 100644
+--- a/poppler/UnicodeTypeTable.h
++++ b/poppler/UnicodeTypeTable.h
+@@ -30,6 +30,13 @@
+ #include "CharTypes.h"
+ #include "poppler_private_export.h"
+ 
++#define UNICODE_LAST_CHAR 0x10FFFF
++#define UNICODE_MAX_TABLE_INDEX (UNICODE_LAST_CHAR / 256 + 1)
++// large empty block between U+2FA1D and U+E0001
++#define UNICODE_LAST_CHAR_PART1 0x2FAFF
++#define UNICODE_LAST_PAGE_PART1 (UNICODE_LAST_CHAR_PART1 / 256)
++#define UNICODE_PART2_START 0xE0000
++
+ extern bool unicodeTypeL(Unicode c);
+ 
+ extern bool unicodeTypeR(Unicode c);
+diff --git a/poppler/ViewerPreferences.cc b/poppler/ViewerPreferences.cc
+index 9d8a70e6..24ef4cd1 100644
+--- a/poppler/ViewerPreferences.cc
++++ b/poppler/ViewerPreferences.cc
+@@ -15,6 +15,7 @@
+ #include "ViewerPreferences.h"
+ 
+ #include "Object.h"
++#include "Array.h"
+ #include "Dict.h"
+ 
+ ViewerPreferences::ViewerPreferences(Dict *prefDict)
+diff --git a/poppler/XRef.cc b/poppler/XRef.cc
+index 3350f6e9..39f50256 100644
+--- a/poppler/XRef.cc
++++ b/poppler/XRef.cc
+@@ -54,6 +54,7 @@
+ #include "Stream.h"
+ #include "Lexer.h"
+ #include "Parser.h"
++#include "Array.h"
+ #include "Dict.h"
+ #include "Error.h"
+ #include "ErrorCodes.h"
+diff --git a/poppler/XRef.h b/poppler/XRef.h
+index 81151dc5..03c3ac40 100644
+--- a/poppler/XRef.h
++++ b/poppler/XRef.h
+@@ -39,12 +39,13 @@
+ 
+ #include "poppler-config.h"
+ #include "poppler_private_export.h"
++#include "PopplerCache.h"
++#include "Ref.h"
+ #include "Object.h"
+ #include "Stream.h"
+-#include "PopplerCache.h"
+ 
+-class Dict;
+-class Stream;
++// class Dict;
++// class Stream;
+ class Parser;
+ class ObjectStream;
+ 

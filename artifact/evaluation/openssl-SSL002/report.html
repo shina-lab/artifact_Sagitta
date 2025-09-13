@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCA Report: openssl SSL002</title>
+    <style>
+        code {
+            font-family: monospace;
+            background-color: #f0f0f0;
+           
+            &:before, &:after {
+                content: '`';
+            }
+        }
+
+        img {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>RCA Report: openssl SSL002</h1>
+
+    <details>
+        <summary>Patch</summary>
+        <pre>
+--- a/ssl/statem/statem.c
++++ b/ssl/statem/statem.c
+@@ -505,7 +505,12 @@ static int grow_init_buf(SSL *s, size_t size) {
+     if (size < msg_offset)
+         return 0;
+ 
++#ifdef MAGMA_ENABLE_FIXES
+     s->init_msg = s->init_buf->data + msg_offset;
++#endif
++#ifdef MAGMA_ENABLE_CANARIES
++    MAGMA_LOG("%MAGMA_BUG%", s->init_msg != (s->init_buf->data + msg_offset));
++#endif
+ 
+     return 1;
+ }
+</pre>
+    </details>
+
+    <h1>Canary-based</h1>
+
+    <h2><code>s->init_msg</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.init_msg.000086.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.init_msg.crash-000017.dot.svg">
+
+    <h2><code>s->init_buf->data</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.init_buf.data.000086.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.init_buf.data.crash-000017.dot.svg">
+
+    <h2><code>msg_offset</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.msg_offset.000086.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.msg_offset.crash-000017.dot.svg">
+
+    <h1>Crash-based</h1>
+
+    <h2><code>buf</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.buf.000086.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.buf.crash-000017.dot.svg">
+
+    <h2><code>msg_offset</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.rr.data.000086.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.rr.data.crash-000017.dot.svg">
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCA Report: libtiff TIF008</title>
+    <style>
+        code {
+            font-family: monospace;
+            background-color: #f0f0f0;
+           
+            &:before, &:after {
+                content: '`';
+            }
+        }
+
+        img {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>RCA Report: libtiff TIF008</h1>
+
+    <details>
+        <summary>Patch</summary>
+        <pre>
+            --- a/libtiff/tif_next.c
+            +++ b/libtiff/tif_next.c
+            @@ -122,15 +122,26 @@ NeXTDecode(TIFF* tif, uint8* buf, tmsize_t occ, uint16 s)
+                              * bounds, potentially resulting in a security
+                              * issue.
+                              */
+            +#ifdef MAGMA_ENABLE_FIXES
+                             while (n-- > 0 && npixels < imagewidth && op_offset < scanline)
+            +#else
+            +                while (n-- > 0 && npixels < imagewidth)
+            +#endif
+            +                {
+            +#ifdef MAGMA_ENABLE_CANARIES
+            +                    MAGMA_LOG("%MAGMA_BUG%", op_offset >= scanline);
+            +#endif
+                                 SETPIXEL(op, grey);
+            +                }
+                             if (npixels >= imagewidth)
+                                 break;
+            +#ifdef MAGMA_ENABLE_FIXES
+                             if (op_offset >= scanline ) {
+                                 TIFFErrorExt(tif->tif_clientdata, module, "Invalid data for scanline %"PRIu32,
+                                     tif->tif_row);
+                                 return (0);
+                             }
+            +#endif
+                             if (cc == 0)
+                                 goto bad;
+                             n = *bp++;         
+        </pre>
+    </details>
+
+    <h1>Canary-based</h1>
+
+    <h2><code>op_offset</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.op_offset.004839.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.op_offset.crash-000117.dot.svg">
+
+    <h2><code>scanline</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.scanline.004839.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.scanline.crash-000117.dot.svg">
+
+    <h1>Crash-based</h1>
+
+    <h2><code>cc</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.cc.004839.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.cc.crash-000117.dot.svg">
+
+    <h2><code>occ</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.occ.004839.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.occ.crash-000117.dot.svg">
+
+    <h2><code>op</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.op.004839.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.op.crash-000117.dot.svg">
+
+    <h2><code>imagewidth</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.imagewidth.004839.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.imagewidth.crash-000117.dot.svg">
+
+</body>
+</html>

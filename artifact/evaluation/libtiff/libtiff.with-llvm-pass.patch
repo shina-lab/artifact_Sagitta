@@ -1,0 +1,21 @@
+--- a/libtiff/CMakeLists.txt
++++ b/libtiff/CMakeLists.txt
+@@ -44,6 +44,7 @@ set(tiff_private_HEADERS
+         uvcode.h
+         ${CMAKE_CURRENT_BINARY_DIR}/tif_config.h)
+ 
++add_compile_options(-flto=full -fpass-plugin=/home/aoki/shina-lab/project-ultimate-sanitizer/try-clang/FunctionTracer/build/libFunctionTracerPass.so)
+ 
+ add_library(tiff libtiff.def)
+
+--- a/tools/CMakeLists.txt
++++ b/tools/CMakeLists.txt
+@@ -72,7 +72,7 @@ target_link_libraries(tiffcmp PRIVATE tiff port)
+ 
+ add_executable(tiffcp)
+ target_sources(tiffcp PRIVATE tiffcp.c)
+-target_link_libraries(tiffcp PRIVATE tiff port)
++target_link_libraries(tiffcp PRIVATE tiff port /home/aoki/shina-lab/project-ultimate-sanitizer/try-clang/FunctionTracer/build/libftrace.a)
+ 
+ add_executable(tiffcrop)
+ target_sources(tiffcrop PRIVATE tiffcrop.c)

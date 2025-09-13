@@ -1,0 +1,79 @@
+FROM trailofbits/polytracker:latest
+
+ARG USER
+ARG UID
+ARG GID
+ENV USER=$USER
+ENV UID=$UID
+ENV GID=$GID
+ENV HOME /home/$USER
+
+### Allow sudo
+RUN mkdir -p /etc/sudoers.d && \
+    echo "${USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/${USER}
+
+ENV TZ=Asia/Tokyo
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apt update
+
+### C
+RUN apt install -y build-essential pkg-config binutils gdb curl lsb-release wget software-properties-common ninja-build
+
+### cmake
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.26.3/cmake-3.26.3-linux-x86_64.sh
+RUN bash cmake-3.26.3-linux-x86_64.sh --prefix=/usr/local --skip-license
+ENV PATH /usr/local/bin/:$PATH
+
+### Python
+RUN apt install -y python3 python3-pip python3-dev libpython3-dev
+RUN python3 -m pip install virtualenv ptpython ipdb
+
+### Utilities
+RUN apt install -y sudo curl zip unzip vim git moreutils
+
+### Bear
+RUN apt install -y libfmt-dev libspdlog-dev nlohmann-json3-dev libgrpc++-dev protobuf-compiler-grpc libssl-dev && \
+    git clone https://github.com/rizsotto/Bear.git && \
+    cd Bear/ && \
+    cmake -DENABLE_UNIT_TESTS=OFF -DENABLE_FUNC_TESTS=OFF . && \
+    make -j$(nproc) && \
+    make install
+
+### compdb
+RUN python3 -m pip install -U compdb
+
+### FIXME: libpng ビルドに必要なもの
+RUN apt-get install -y git make autoconf automake libtool zlib1g-dev
+### FIXME: libtiff ビルドに必要なもの
+RUN apt-get install -y git make autoconf automake libtool cmake nasm \
+        zlib1g-dev liblzma-dev libjpeg-turbo8-dev wget
+### FIXME: poppler ビルドに必要なもの
+### NOTE: libtiff のビルドエラーを引き起こす依存関係があるっぽい
+RUN apt-get install -y git make autoconf automake libtool pkg-config cmake \
+        zlib1g-dev libjpeg-dev libopenjp2-7-dev libpng-dev libcairo2-dev \
+        libtiff-dev liblcms2-dev libboost-dev \
+        libharfbuzz-dev 
+# ### FIXME: php ビルドに必要なもの
+RUN apt-get install -y git make autoconf automake libtool bison re2c pkg-config \
+        libicu-dev
+# ### FIXME: sqlite3 ビルドに必要なもの
+RUN apt-get install -y git make autoconf automake libtool curl tcl zlib1g-dev
+
+### 便利ツール
+RUN apt-get install -y silversearcher-ag strace ltrace graphviz cairosvg
+
+RUN ldconfig
+
+# RUN rm -rf /build
+
+### Create user
+### NOTE: ホームディレクトリはマウントポイントとして使う
+RUN useradd --create-home --home-dir /home/${USER} --uid ${UID} ${USER}
+RUN usermod -aG sudo ${USER}
+
+ENV WLLVM_BC_STORE=/project_bitcode
+ENV WLLVM_ARTIFACT_STORE=/project_artifacts
+RUN chown -R ${USER}:${USER} ${WLLVM_BC_STORE} ${WLLVM_ARTIFACT_STORE}
+
+### Change default user
+USER ${USER}

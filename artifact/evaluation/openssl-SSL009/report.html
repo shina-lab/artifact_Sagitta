@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCA Report: openssl SSL002</title>
+    <style>
+        code {
+            font-family: monospace;
+            background-color: #f0f0f0;
+           
+            &:before, &:after {
+                content: '`';
+            }
+        }
+
+        img {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>RCA Report: openssl SSL002</h1>
+
+    <details>
+        <summary>Patch</summary>
+        <pre>
+            --- a/crypto/x509/v3_addr.c
+            +++ b/crypto/x509/v3_addr.c
+            @@ -84,12 +84,31 @@ static int length_from_afi(const unsigned afi)
+              */
+             unsigned int X509v3_addr_get_afi(const IPAddressFamily *f)
+             {
+            +#ifdef MAGMA_ENABLE_FIXES
+                 if (f == NULL
+                         || f->addressFamily == NULL
+                         || f->addressFamily->data == NULL
+                         || f->addressFamily->length < 2)
+                     return 0;
+                 return (f->addressFamily->data[0] << 8) | f->addressFamily->data[1];
+            +#else
+            +#ifdef MAGMA_ENABLE_CANARIES
+            +    /**
+            +    *This bug will do a 1 byte overread when the length is too short
+            +    */
+            +    MAGMA_LOG("%MAGMA_BUG%", MAGMA_AND(f != NULL, \
+            +            MAGMA_AND(f->addressFamily != NULL, \
+            +            MAGMA_AND(f->addressFamily->data != NULL, \
+            +            f->addressFamily->length < 2)))
+            +    );
+            +
+            +#endif
+            +    return ((f != NULL &&
+            +            f->addressFamily != NULL && f->addressFamily->data != NULL)
+            +            ? ((f->addressFamily->data[0] << 8) | (f->addressFamily->data[1]))
+            +            : 0);
+            +
+            +#endif
+             }
+             
+             /*            
+        </pre>
+    </details>
+
+    <h1>Canary-based / Crash-based</h1>
+
+    <h2><code>f->addressFamily->data</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.addressFamily.data.000086.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.addressFamily.data.crash-000017.dot.svg">
+
+    <h2><code>f->addressFamily->length</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.addressFamily.length.000086.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.addressFamily.length.crash-000017.dot.svg">
+</body>
+</html>

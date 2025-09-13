@@ -1,0 +1,15 @@
+diff --git a/libtiff/tif_dirwrite.c b/libtiff/tif_dirwrite.c
+index 032a4be9..06e4a1f1 100644
+--- a/libtiff/tif_dirwrite.c
++++ b/libtiff/tif_dirwrite.c
+@@ -2061,6 +2061,10 @@ TIFFWriteDirectoryTagColormap(TIFF* tif, uint32_t* ndir, TIFFDirEntry* dir)
+                (*ndir)++;
+                return(1);
+        }
++
++#ifdef MAGMA_ENABLE_CANARIES
++       MAGMA_LOG("TIF005-actual", tif->tif_dir.td_bitspersample == 16);
++#endif
+        m=(1<<tif->tif_dir.td_bitspersample);
+        n=_TIFFmalloc(3*m*sizeof(uint16_t));
+        if (n==NULL)

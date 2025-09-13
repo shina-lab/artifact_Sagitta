@@ -1,0 +1,327 @@
+diff --git a/libtiff/tif_dir.c b/libtiff/tif_dir.c
+index a6c254fc..4927bc19 100644
+--- a/libtiff/tif_dir.c
++++ b/libtiff/tif_dir.c
+@@ -167,7 +172,163 @@ bad:
+ 	return (0);
+ }
+ 
+-static int
++int
++_TIFFVSetFieldU16(TIFF* tif, uint32_t tag, uint16_t value)
++{
++	static const char module[] = "_TIFFVSetFieldU16";
++
++	TIFFDirectory* td = &tif->tif_dir;
++	int status = 1;
++	uint32_t v32, i, v;
++    double dblval;
++	char* s;
++	const TIFFField *fip = TIFFFindField(tif, tag, TIFF_ANY);
++	uint32_t standard_tag = tag;
++	if( fip == NULL ) /* cannot happen since OkToChangeTag() already checks it */
++	    return 0;
++	/*
++	 * We want to force the custom code to be used for custom
++	 * fields even if the tag happens to match a well known 
++	 * one - important for reinterpreted handling of standard
++	 * tag values in custom directories (i.e. EXIF) 
++	 */
++	if (fip->field_bit == FIELD_CUSTOM) {
++		standard_tag = 0;
++	}
++
++	switch (standard_tag) {
++	case TIFFTAG_BITSPERSAMPLE:
++		td->td_bitspersample = value;
++		/*
++		 * If the data require post-decoding processing to byte-swap
++		 * samples, set it up here.  Note that since tags are required
++		 * to be ordered, compression code can override this behavior
++		 * in the setup method if it wants to roll the post decoding
++		 * work in with its normal work.
++		 */
++		if (tif->tif_flags & TIFF_SWAB) {
++			if (td->td_bitspersample == 8)
++				tif->tif_postdecode = _TIFFNoPostDecode;
++			else if (td->td_bitspersample == 16)
++				tif->tif_postdecode = _TIFFSwab16BitData;
++			else if (td->td_bitspersample == 24)
++				tif->tif_postdecode = _TIFFSwab24BitData;
++			else if (td->td_bitspersample == 32)
++				tif->tif_postdecode = _TIFFSwab32BitData;
++			else if (td->td_bitspersample == 64)
++				tif->tif_postdecode = _TIFFSwab64BitData;
++			else if (td->td_bitspersample == 128) /* two 64's */
++				tif->tif_postdecode = _TIFFSwab64BitData;
++		}
++		break;
++	case TIFFTAG_COMPRESSION:
++		v = value;
++		/*
++		 * If we're changing the compression scheme, the notify the
++		 * previous module so that it can cleanup any state it's
++		 * setup.
++		 */
++		if (TIFFFieldSet(tif, FIELD_COMPRESSION)) {
++			if ((uint32_t)td->td_compression == v)
++				break;
++			(*tif->tif_cleanup)(tif);
++			tif->tif_flags &= ~TIFF_CODERSETUP;
++		}
++		/*
++		 * Setup new compression routine state.
++		 */
++		if( (status = TIFFSetCompressionScheme(tif, v)) != 0 )
++		    td->td_compression = (uint16_t) v;
++		else
++		    status = 0;
++		break;
++	case TIFFTAG_PHOTOMETRIC:
++		td->td_photometric = value;
++		break;
++	case TIFFTAG_THRESHHOLDING:
++		td->td_threshholding = value;
++		break;
++	case TIFFTAG_FILLORDER:
++		v = value;
++		if (v != FILLORDER_LSB2MSB && v != FILLORDER_MSB2LSB)
++			goto badvalue;
++		td->td_fillorder = (uint16_t) v;
++		break;
++	case TIFFTAG_ORIENTATION:
++		v = value;
++		if (v < ORIENTATION_TOPLEFT || ORIENTATION_LEFTBOT < v)
++			goto badvalue;
++		else
++			td->td_orientation = (uint16_t) v;
++		break;
++	case TIFFTAG_SAMPLESPERPIXEL:
++		v = value;
++		if (v == 0)
++			goto badvalue;
++        if( v != td->td_samplesperpixel )
++        {
++#ifdef MAGMA_ENABLE_FIXES
++            /* See http://bugzilla.maptools.org/show_bug.cgi?id=2500 */
++            if( td->td_sminsamplevalue != NULL )
++            {
++                TIFFWarningExt(tif->tif_clientdata,module,
++                    "SamplesPerPixel tag value is changing, "
++                    "but SMinSampleValue tag was read with a different value. Canceling it");
++                TIFFClrFieldBit(tif,FIELD_SMINSAMPLEVALUE);
++                _TIFFfree(td->td_sminsamplevalue);
++                td->td_sminsamplevalue = NULL;
++            }
++            if( td->td_smaxsamplevalue != NULL )
++            {
++                TIFFWarningExt(tif->tif_clientdata,module,
++                    "SamplesPerPixel tag value is changing, "
++                    "but SMaxSampleValue tag was read with a different value. Canceling it");
++                TIFFClrFieldBit(tif,FIELD_SMAXSAMPLEVALUE);
++                _TIFFfree(td->td_smaxsamplevalue);
++                td->td_smaxsamplevalue = NULL;
++            }
++            /* Test if 3 transfer functions instead of just one are now needed
++               See http://bugzilla.maptools.org/show_bug.cgi?id=2820 */
++            if( td->td_transferfunction[0] != NULL && (v - td->td_extrasamples > 1) &&
++                !(td->td_samplesperpixel - td->td_extrasamples > 1))
++            {
++                    TIFFWarningExt(tif->tif_clientdata,module,
++                        "SamplesPerPixel tag value is changing, "
++                        "but TransferFunction was read with a different value. Canceling it");
++                    TIFFClrFieldBit(tif,FIELD_TRANSFERFUNCTION);
++                    _TIFFfree(td->td_transferfunction[0]);
++                    td->td_transferfunction[0] = NULL;
++            }
++#endif
++#ifdef MAGMA_ENABLE_CANARIES
++           MAGMA_LOG("TIF012-1", td->td_sminsamplevalue != NULL);
++           MAGMA_LOG("TIF012-2", td->td_smaxsamplevalue != NULL);
++           MAGMA_LOG("TIF012-3", td->td_transferfunction[0] != NULL && (v - td->td_extrasamples > 1) && !(td->td_samplesperpixel - td->td_extrasamples > 1));
++#endif
++        }
++		td->td_samplesperpixel = (uint16_t) v;
++		break;
++	}
++	// if (status) { // なぜかカナリアが鳴らなくなる
++	// 	const TIFFField* fip2=TIFFFieldWithTag(tif,tag);
++	// 	if (fip2)                
++	// 		TIFFSetFieldBit(tif, fip2->field_bit);
++	// 	tif->tif_flags |= TIFF_DIRTYDIRECT;
++	// }
++end:
++	return (status);
++badvalue:
++        {
++		const TIFFField* fip2=TIFFFieldWithTag(tif,tag);
++		TIFFErrorExt(tif->tif_clientdata, module,
++		     "%s: Bad value %"PRIu32" for \"%s\" tag",
++		     tif->tif_name, v,
++		     fip2 ? fip2->field_name : "Unknown");
++        }
++	return (0);
++}
++
++int
+ _TIFFVSetField(TIFF* tif, uint32_t tag, va_list ap)
+ {
+ 	static const char module[] = "_TIFFVSetField";
+@@ -836,6 +889,15 @@ TIFFSetField(TIFF* tif, uint32_t tag, ...)
+ 	return (status);
+ }
+ 
++int
++TIFFSetFieldU16(TIFF* tif, uint32_t tag, uint16_t value)
++{
++	int status;
++
++	status = TIFFVSetFieldU16(tif, tag, value);
++	return (status);
++}
++
+ /*
+  * Clear the contents of the field in the internal structure.
+  */
+@@ -890,6 +952,13 @@ TIFFVSetField(TIFF* tif, uint32_t tag, va_list ap)
+ 	    (*tif->tif_tagmethods.vsetfield)(tif, tag, ap) : 0;
+ }
+ 
++int
++TIFFVSetFieldU16(TIFF* tif, uint32_t tag, uint16_t value)
++{
++	return OkToChangeTag(tif, tag) ?
++	    _TIFFVSetFieldU16(tif, tag, value) : 0;
++}
++
+ static int
+ _TIFFVGetField(TIFF* tif, uint32_t tag, va_list ap)
+ {
+diff --git a/libtiff/tif_dirread.c b/libtiff/tif_dirread.c
+index d84147a0..2dbfda9a 100644
+--- a/libtiff/tif_dirread.c
++++ b/libtiff/tif_dirread.c
+@@ -3682,13 +3682,13 @@ TIFFReadDirectory(TIFF* tif)
+ 			TIFFReadDirEntryOutputErr(tif,err,module,"Compression",0);
+ 			goto bad;
+ 		}
+-		if (!TIFFSetField(tif,TIFFTAG_COMPRESSION,value))
++		if (!TIFFSetFieldU16(tif,TIFFTAG_COMPRESSION,value))
+ 			goto bad;
+ 		dp->tdir_ignore = TRUE;
+ 	}
+ 	else
+ 	{
+-		if (!TIFFSetField(tif,TIFFTAG_COMPRESSION,COMPRESSION_NONE))
++		if (!TIFFSetFieldU16(tif,TIFFTAG_COMPRESSION,COMPRESSION_NONE))
+ 			goto bad;
+ 	}
+ 	/*
+@@ -4099,7 +4099,7 @@ TIFFReadDirectory(TIFF* tif)
+ 		{
+ 			TIFFWarningExt(tif->tif_clientdata, module,
+ 			    "Photometric tag is missing, assuming data is YCbCr");
+-			if (!TIFFSetField(tif,TIFFTAG_PHOTOMETRIC,PHOTOMETRIC_YCBCR))
++			if (!TIFFSetFieldU16(tif,TIFFTAG_PHOTOMETRIC,PHOTOMETRIC_YCBCR))
+ 				goto bad;
+ 		}
+ 		else if (tif->tif_dir.td_photometric==PHOTOMETRIC_RGB)
+@@ -4123,7 +4123,7 @@ TIFFReadDirectory(TIFF* tif)
+ 				TIFFWarningExt(tif->tif_clientdata,module,
+ 				    "SamplesPerPixel tag is missing, "
+ 				    "assuming correct SamplesPerPixel value is 3");
+-				if (!TIFFSetField(tif,TIFFTAG_SAMPLESPERPIXEL,3))
++				if (!TIFFSetFieldU16(tif,TIFFTAG_SAMPLESPERPIXEL,3))
+ 					goto bad;
+ 			}
+ 			if (tif->tif_dir.td_photometric==PHOTOMETRIC_YCBCR)
+@@ -4131,7 +4131,7 @@ TIFFReadDirectory(TIFF* tif)
+ 				TIFFWarningExt(tif->tif_clientdata,module,
+ 				    "SamplesPerPixel tag is missing, "
+ 				    "applying correct SamplesPerPixel value of 3");
+-				if (!TIFFSetField(tif,TIFFTAG_SAMPLESPERPIXEL,3))
++				if (!TIFFSetFieldU16(tif,TIFFTAG_SAMPLESPERPIXEL,3))
+ 					goto bad;
+ 			}
+ 			else if ((tif->tif_dir.td_photometric==PHOTOMETRIC_MINISWHITE)
+@@ -4141,7 +4141,7 @@ TIFFReadDirectory(TIFF* tif)
+ 				 * SamplesPerPixel tag is missing, but is not required
+ 				 * by spec.  Assume correct SamplesPerPixel value of 1.
+ 				 */
+-				if (!TIFFSetField(tif,TIFFTAG_SAMPLESPERPIXEL,1))
++				if (!TIFFSetFieldU16(tif,TIFFTAG_SAMPLESPERPIXEL,1))
+ 					goto bad;
+ 			}
+ 		}
+@@ -5114,7 +5114,7 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
+ 				err=TIFFReadDirEntryShort(tif,dp,&data);
+ 				if (err==TIFFReadDirEntryErrOk)
+ 				{
+-					if (!TIFFSetField(tif,dp->tdir_tag,data))
++					if (!TIFFSetFieldU16(tif,dp->tdir_tag,data))
+ 						return(0);
+ 				}
+ 			}
+diff --git a/libtiff/tif_ojpeg.c b/libtiff/tif_ojpeg.c
+index 66cd275f..e8a8b63e 100644
+--- a/libtiff/tif_ojpeg.c
++++ b/libtiff/tif_ojpeg.c
+@@ -122,6 +122,7 @@
+ #define VC_EXTRALEAN
+ 
+ #include "tiffiop.h"
++#include "tiffio.h"
+ #ifdef OJPEG_SUPPORT
+ 
+ /* Configuration defines here are:
+@@ -597,6 +597,10 @@ OJPEGVSetField(TIFF* tif, uint32_t tag, va_list ap)
+ 		case TIFFTAG_JPEGRESTARTINTERVAL:
+ 			sp->restart_interval=(uint16_t)va_arg(ap, uint16_vap);
+ 			break;
++		case TIFFTAG_BITSPERSAMPLE:
++			if (sp->vsetparent == _TIFFVSetField)
++				return _TIFFVSetFieldU16(tif, tag, (uint16_t)va_arg(ap, uint16_vap));
++			// goto default
+ 		default:
+ 			return (*sp->vsetparent)(tif,tag,ap);
+ 	}
+diff --git a/libtiff/tiffio.h b/libtiff/tiffio.h
+index c6a192c5..49762044 100644
+--- a/libtiff/tiffio.h
++++ b/libtiff/tiffio.h
+@@ -411,7 +411,11 @@ extern int TIFFSetDirectory(TIFF*, uint16_t);
+ extern int TIFFSetSubDirectory(TIFF*, uint64_t);
+ extern int TIFFUnlinkDirectory(TIFF*, uint16_t);
+ extern int TIFFSetField(TIFF*, uint32_t, ...);
++extern int _TIFFVSetField(TIFF*, uint32_t, va_list);
++extern int TIFFSetFieldU16(TIFF*, uint32_t, uint16_t);
+ extern int TIFFVSetField(TIFF*, uint32_t, va_list);
++extern int TIFFVSetFieldU16(TIFF*, uint32_t, uint16_t);
++extern int _TIFFVSetFieldU16(TIFF*, uint32_t, uint16_t);
+ extern int TIFFUnsetField(TIFF*, uint32_t);
+ extern int TIFFWriteDirectory(TIFF *);
+ extern int TIFFWriteCustomDirectory(TIFF *, uint64_t *);
+diff --git a/tools/tiffcp.c b/tools/tiffcp.c
+index 224583e0..53f2f645 100644
+--- a/tools/tiffcp.c
++++ b/tools/tiffcp.c
+@@ -586,6 +586,8 @@ usage(int code)
+ 
+ #define	CopyField(tag, v) \
+     if (TIFFGetField(in, tag, &v)) TIFFSetField(out, tag, v)
++#define	CopyFieldU16(tag, v) \
++    if (TIFFGetField(in, tag, &v)) TIFFSetFieldU16(out, tag, v)
+ #define	CopyField2(tag, v1, v2) \
+     if (TIFFGetField(in, tag, &v1, &v2)) TIFFSetField(out, tag, v1, v2)
+ #define	CopyField3(tag, v1, v2, v3) \
+@@ -708,8 +710,8 @@ tiffcp(TIFF* in, TIFF* out)
+ 
+ 	CopyField(TIFFTAG_IMAGEWIDTH, width);
+ 	CopyField(TIFFTAG_IMAGELENGTH, length);
+-	CopyField(TIFFTAG_BITSPERSAMPLE, bitspersample);
+-	CopyField(TIFFTAG_SAMPLESPERPIXEL, samplesperpixel);
++	CopyFieldU16(TIFFTAG_BITSPERSAMPLE, bitspersample);
++	CopyFieldU16(TIFFTAG_SAMPLESPERPIXEL, samplesperpixel);
+ 	if (compression != (uint16_t)-1)
+ 		TIFFSetField(out, TIFFTAG_COMPRESSION, compression);
+ 	else

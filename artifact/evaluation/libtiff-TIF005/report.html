@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCA Report: libtiff TIF005</title>
+    <style>
+        code {
+            font-family: monospace;
+            background-color: #f0f0f0;
+           
+            &:before, &:after {
+                content: '`';
+            }
+        }
+
+        img {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>RCA Report: libtiff TIF005</h1>
+
+    <details>
+        <summary>Patch</summary>
+        <pre>
+            diff --git a/libtiff/tif_luv.c b/libtiff/tif_luv.c
+            index 6a63ead..780107e 100644
+            --- a/libtiff/tif_luv.c
+            +++ b/libtiff/tif_luv.c
+            @@ -1587,7 +1587,9 @@ LogLuvClose(TIFF* tif)
+                  * before they have been recorded in the file, we reset them here.
+                      * Note: this is really a nasty approach. See PixarLogClose
+                  */
+            +#ifdef MAGMA_ENABLE_FIXES
+                     if( sp->encoder_state )
+            +#endif
+                     {
+                         /* See PixarLogClose. Might avoid issues with tags whose size depends
+                          * on those below, but not completely sure this is enough. */
+            @@ -1596,6 +1598,9 @@ LogLuvClose(TIFF* tif)
+                         td->td_bitspersample = 16;
+                         td->td_sampleformat = SAMPLEFORMAT_INT;
+                     }
+            +#ifdef MAGMA_ENABLE_CANARIES
+            +    MAGMA_LOG("%MAGMA_BUG%", sp->encoder_state == 0);
+            +#endif
+             }
+             
+             static void            
+        </pre>
+    </details>
+
+    <h1>Canary-based</h1>
+
+    <h2><code>encoder_state</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.encoder_state.000711.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.encoder_state.crash-000041.dot.svg">
+
+    <h1>Crash-based</h1>
+
+    <h2><code>m</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.m.000711.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.m.crash-000041.dot.svg">
+
+    <h2><code>n</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.n.000711.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.n.crash-000041.dot.svg">
+
+    <h2><code>td_colormap</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.td_colormap.000711.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.td_colormap.crash-000041.dot.svg">
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCA Report: libpng PNG007</title>
+    <style>
+        code {
+            font-family: monospace;
+            background-color: #f0f0f0;
+           
+            &:before, &:after {
+                content: '`';
+            }
+        }
+
+        img {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>RCA Report: libpng PNG007</h1>
+
+    <details>
+        <summary>Patch</summary>
+        <pre>
+@@ -1959,8 +1959,13 @@ png_read_transform_info(png_structrp png_ptr, png_inforp info_ptr)
+            info_ptr->bit_depth = 8;
+            info_ptr->num_trans = 0;
+   
+  +#ifdef MAGMA_ENABLE_FIXES
+            if (png_ptr->palette == NULL)
+               png_error (png_ptr, "Palette is NULL in indexed image");
+  +#endif
+  +#ifdef MAGMA_ENABLE_CANARIES
+  +         MAGMA_LOG("%MAGMA_BUG%", png_ptr->palette == NULL);
+  +#endif
+         }
+         else
+         {
+        </pre>
+    </details>
+
+    <h1>Canary-based</h1>
+
+    <h2><code>png_ptr->palette</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.png_ptr.palette.000003.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.png_ptr.palette.crash-000066.dot.svg">
+
+    <h1>Crash-based</h1>
+
+    <h2><code>sp</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.sp.000003.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.sp.crash-000066.dot.svg">
+
+    <h2><code>palette[*sp].blue</code></h2>
+    <h3>non-crash</h3>
+    <img src="result/diff.subgraph.blue.000003.dot.svg">
+    <h3>crash</h3>
+    <img src="result/diff.subgraph.blue.crash-000066.dot.svg">
+
+</body>
+</html>

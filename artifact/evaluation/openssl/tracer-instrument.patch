@@ -1,0 +1,22 @@
+--- a/apps/lib/apps.c
++++ b/apps/lib/apps.c
+@@ -42,6 +42,7 @@
+ #include <openssl/core_names.h>
+ #include "s_apps.h"
+ #include "apps.h"
++#include <trace.h>
+
+ #ifdef _WIN32
+ static int WIN32_rename(const char *from, const char *to);
+
+--- a/crypto/engine/eng_openssl.c
++++ b/crypto/engine/eng_openssl.c
+@@ -31,6 +31,8 @@
+ #include <openssl/hmac.h>
+ #include <openssl/x509v3.h>
+
++#include <trace.h>
++
+ /*
+  * This testing gunk is implemented (and explained) lower down. It also
+  * assumes the application explicitly calls "ENGINE_load_openssl()" because

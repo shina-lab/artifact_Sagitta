@@ -1,0 +1,18 @@
+### Compile target
+/build
+*.instrumented
+*.o
+*.bc
+*.ll
+
+### Cache files
+__pycache__/
+/.bsp
+/.scala-build
+
+### Need not to track changes
+/artifacts
+blight_journal.jsonl
+*.tdag
+*.log
+*.gz

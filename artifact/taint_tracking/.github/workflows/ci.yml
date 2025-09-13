@@ -1,0 +1,23 @@
+name: CI Test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: coursier/cache-action@v6
+    - uses: VirtusLab/scala-cli-setup@main
+      with:
+        power: true
+
+    - name: Compile taint_tracking.sc
+      run: scala-cli compile taint_tracking.scala
+    
+    - name: Compile ci_test.sc
+      run: scala-cli compile ci_test.sc

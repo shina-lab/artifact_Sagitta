@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 42ff0f902..2391e754f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -524,6 +524,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${ZLIB_INCLUDE_DIRS})
+ 
+ unset(PNG_LIB_TARGETS)
+ 
++add_compile_options(-flto=full -fpass-plugin=/home/aoki/shina-lab/project-ultimate-sanitizer/try-clang/FunctionTracer/build/libFunctionTracerPass.so)
++
+ if(PNG_SHARED)
+   add_library(png SHARED ${libpng_sources})
+   set(PNG_LIB_TARGETS png)
