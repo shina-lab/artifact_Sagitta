@@ -2,8 +2,8 @@
 
 This artifact contains source code for Section 6 of our paper.
 
-Dependencies: Ubuntu 22.04, Docker, x86_64 machine, sudo.
-Infrastructure: Standard x86_64 machine (no special devices required).
+Dependencies: Ubuntu 22.04, Docker (usable from normal user), x86_64 machine, sudo.
+Infrastructure: Standard x86_64 machine (no special devices required; recommend 4 CPUs + 32GB RAM).
 Expected runtime: 30 minutes (installation 15 minutes + claim 15 minutes).
 Repository: https://github.com/shina-lab/artifact_Sagitta
 To reproduce Claim 1: run install.sh then claims/claim1/run.sh.
@@ -11,8 +11,7 @@ Expected output is in claims/claim1/expected/.
 
 
 ---- List of source code and input/output files
-// どのフォルダーがコード、ベンチマーク、データなどに対応するかなどの説明。
-FIXME: 全体向けに書き直す
+どのフォルダーがコード、ベンチマーク、データなどに対応するかなどの説明します。
 
 Software components (source code): 
     artifact/evaluation
@@ -23,11 +22,15 @@ Software components (source code):
     artifact/polytracker
         polytracker (modified by us in section 5)
     artifact/taint_tracking
-        our tool library (implemented in section 5)
+        our tool (implemented in section 5)
     artifact/try-clang
-        Supplemental header file for Magma
+        Supplemental header file for Magma (required for build Magma and target binaries)
     artifact/work-desk
         Helper utility for building/running polytracker
+    artifact/build_libtiff.sh
+        Script file to build libtiff (used for claim/claim1)
+    artifact/pipeline.py
+        Script file to run our tool (used for claim/claim1)
 
 Input pair (section 6.1): 
     In evaluation/input-file/, directories contains crash/non-crash inputs.

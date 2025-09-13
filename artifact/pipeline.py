@@ -63,7 +63,7 @@ def run_analysis():
         )
     
     print("[*] Phase 2: Run the analysis")
-    run_in_docker(b"sg docker -c ./run.sc", f"{ARTIFACT_DIR}/evaluation/libtiff-TIF008")
+    run_in_docker(b"./run.sc", f"{ARTIFACT_DIR}/evaluation/libtiff-TIF008")
     print("[*] Phase 3: Done")
     
 def collect_results():
