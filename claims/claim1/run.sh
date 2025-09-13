@@ -5,7 +5,7 @@ artifact_dir=$(cd ${script_dir}/../../artifact; pwd)
 set -eux
 
 ### Remove generated results
-${script_dir}/*.svg
+rm -f ${script_dir}/*.svg
 
 ### Perform phase 3, 4
 python3 ${artifact_dir}/pipeline.py

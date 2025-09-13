@@ -13,14 +13,23 @@ sudo apt install -y python3 python3-pip
 # pip3 install apache-airflow==2.7.0
 
 ### Install Docker
-if ! snap list | grep -q '^docker '; then
-    sudo snap install docker
+if ! command docker &> /dev/null; then
+sudo apt-get install -y ca-certificates curl gnupg lsb-release
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+echo \
+"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+$(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo systemctl enable docker
+sudo systemctl start docker
 fi
+
 if ! getent group docker > /dev/null; then
     sudo addgroup --system docker
 fi
 if ! id -nG "$USER" | grep -qw "docker"; then
-    sudo usermod -aG docker "$USER"
+    sudo usermod -aG docker $USER
 fi
 
 # ### Activate proper Python environment for Ubuntu 24.04 (Not works)
@@ -34,18 +43,21 @@ fi
 # poetry env activate
 
 ### Install Scala CLI
-curl -fL https://github.com/Virtuslab/scala-cli/releases/latest/download/scala-cli-x86_64-pc-linux.gz | gzip -d > scala-cli
-chmod +x scala-cli
-sudo mv scala-cli /usr/local/bin/scala-cli
+if ! command -v scala-cli &> /dev/null; then
+    curl -fL https://github.com/Virtuslab/scala-cli/releases/latest/download/scala-cli-x86_64-pc-linux.gz | gzip -d > scala-cli
+    chmod +x scala-cli
+    sudo mv scala-cli /usr/local/bin/scala-cli
+fi
 
 ### Install PolyTracker
 cd ${artifact_dir}/polytracker
-pip3 install -e . --break-system-packages
+git submodule update --init --recursive
+pip3 install -e . 
 
 ### Build docker image for PolyTracker
 cd ${artifact_dir}/work-desk
-./setup.sc polytracker
-./setup.sc polytracker.slim
+sg docker -c "scala-cli run ./setup.sc -v -- polytracker"
+sg docker -c "scala-cli run ./setup.sc -v -- polytracker.slim"
 
 
 echo "[*] Installation completed."

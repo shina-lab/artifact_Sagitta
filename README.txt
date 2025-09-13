@@ -1,17 +1,35 @@
-This artifact reproduces the localization graph generation experiment described in Section 6.4.2 of our paper and visualized in Figure 5. The artifact consists of software (source code, build scripts, and analysis tools) and sample data (TIF008 crash input and non-crash input pairs).
-
-The artifact demonstrates our software crash root cause analysis technique through four phases: (1) TIF008 bug reproduction using the Magma framework, (2) instrumented libtiff compilation with polytracker for taint analysis, (3) localization graph generation via data flow analysis, and (4) validation of generated localization graph (in SVG format) against the Figure 5 results.
-
-Software components: Source code (Magma/libtiff), build automation scripts, and analysis pipeline.
-Dependencies: Ubuntu 22.04 and Docker.
-Hardware requirements: .
-Output format: SVG (for graphing).
+==== Artifact of Sagitta
 
 This artifact contains source code for Section 6 of our paper.
-Dependencies: Ubuntu 22.04, Docker, x86_64 machine.
+
+Dependencies: Ubuntu 22.04, Docker, x86_64 machine, sudo.
 Infrastructure: Standard x86_64 machine (no special devices required).
-Expected runtime: 45 minutes.
+Expected runtime: 30 minutes (installation 15 minutes + claim 15 minutes).
 Repository: https://github.com/shina-lab/artifact_Sagitta
-Dataset: Bug dataset artifact/magma-v1.2, and input pair evaluation/input-file/7fcf1f3ea2333be518eac93dc8bcfc276272db21.
 To reproduce Claim 1: run install.sh then claims/claim1/run.sh.
 Expected output is in claims/claim1/expected/.
+
+
+---- List of source code and input/output files
+// どのフォルダーがコード、ベンチマーク、データなどに対応するかなどの説明。
+FIXME: 全体向けに書き直す
+
+Software components (source code): 
+    artifact/evaluation
+        our analysis pipeline tailored for our tool library (used in section 6.3)
+        subfolders contains evaluated cases (e.g. TIF008), and run.sc invokes analysis pipeline.
+    artifact/magma-v1.2 
+        Magma framework (modified by us in section 6.1)
+    artifact/polytracker
+        polytracker (modified by us in section 5)
+    artifact/taint_tracking
+        our tool library (implemented in section 5)
+    artifact/try-clang
+        Supplemental header file for Magma
+    artifact/work-desk
+        Helper utility for building/running polytracker
+
+Input pair (section 6.1): 
+    In evaluation/input-file/, directories contains crash/non-crash inputs.
+    Input pair is picked from these directory by run.sc in artifact/evaluation.
+

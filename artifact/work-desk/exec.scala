@@ -4,6 +4,7 @@
 
 def dockerExec(name: String): os.CommandResult = {
   var cmd = Seq(
+    "sudo",
     "docker",
     "run",
     "--rm",

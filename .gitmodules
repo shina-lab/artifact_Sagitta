@@ -1,0 +1,3 @@
+[submodule "artifact/polytracker"]
+	path = artifact/polytracker
+	url = git@github.com:shina-lab/software_aoki_polytracker.git
