@@ -1,0 +1,6 @@
+input-0: artifact/aflplusplus/libtiff/tiff_read_rgba_fuzzer/3/findings/queue/id:000020,time:0,orig:not_kitty.tiff
+input-1: artifact/aflplusplus/libtiff/tiff_read_rgba_fuzzer/3/findings/queue/id:000395,src:000020,time:203816,op:its,rep:2
+input-2: artifact/aflplusplus/libtiff/tiff_read_rgba_fuzzer/3/findings/queue/id:001088,src:000395,time:3687374,op:its,rep:32,+cov
+input-3: artifact/aflplusplus/libtiff/tiff_read_rgba_fuzzer/3/findings/queue/id:001767,src:001088,time:11649071,op:its,rep:2
+input-4: artifact/aflplusplus/libtiff/tiff_read_rgba_fuzzer/3/findings/queue/id:002492,src:001767,time:22712564,op:ext_AO,pos:249,+cov
+input-5: artifact/aflplusplus/libtiff/tiff_read_rgba_fuzzer/3/findings/crashes/id:000153,sig:11,src:002492,time:37043173,op:arith8,pos:132,val:+12

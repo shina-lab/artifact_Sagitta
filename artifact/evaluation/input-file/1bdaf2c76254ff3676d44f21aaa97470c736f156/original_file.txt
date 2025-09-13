@@ -1,0 +1,2 @@
+4c3d71fb8bfbc1c1976dbf2d8d00f593c76dd82c ar/afl/poppler/pdfimages/2/findings/queue/id:000017,orig:ZapfDingbats.pdf
+1bdaf2c76254ff3676d44f21aaa97470c736f156 ar/afl/poppler/pdfimages/2/findings/crashes/id:000146,sig:11,src:000017,op:havoc,rep:4

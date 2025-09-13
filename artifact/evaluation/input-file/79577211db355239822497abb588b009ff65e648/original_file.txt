@@ -1,0 +1,15 @@
+7d95e7de767162dbd49cd16377cd4ebd1e98155e ar/afl/sqlite3/sqlite3_fuzz/4/findings/queue/id:000122,orig:collateB.test
+fd2e7812dc26ce5d13bcd3ea80137dcf8ba364df ar/afl/sqlite3/sqlite3_fuzz/4/findings/queue/id:001130,src:000122,op:ext_AO,pos:0,+cov
+50b65da5c810abb79e19ec32e2f8b81f49885b55 ar/afl/sqlite3/sqlite3_fuzz/4/findings/queue/id:001282,src:001130,op:flip2,pos:6
+34d70641fac56dabc367aaff418770462dae64d7 ar/afl/sqlite3/sqlite3_fuzz/4/findings/queue/id:001515,src:001282,op:havoc,rep:128,+cov
+c2c40b5ec0621040f8bfbaa5d542caffe19eaf1c ar/afl/sqlite3/sqlite3_fuzz/4/findings/queue/id:001795,src:001515,op:havoc,rep:8,+cov
+ad3c0b4488bac273d3b6b4f98d8fa3ad36f4de73 ar/afl/sqlite3/sqlite3_fuzz/4/findings/queue/id:002190,src:001795,op:havoc,rep:2,+cov
+70ed58cc033a12e612df34823b6e529dbdd77410 ar/afl/sqlite3/sqlite3_fuzz/4/findings/queue/id:002568,src:002190,op:ext_AO,pos:28
+c9b203a50dc639d7b52f00288c9a60de130f80fb ar/afl/sqlite3/sqlite3_fuzz/4/findings/queue/id:002826,src:002568,op:arith8,pos:31,val:-7,+cov
+3e323cdca688a4f5c9fb29e808ec81a69b73e4ca ar/afl/sqlite3/sqlite3_fuzz/4/findings/queue/id:002946,src:002826,op:havoc,rep:2
+dd36997b6d8dfaded93bb9593123ccb45a09484b ar/afl/sqlite3/sqlite3_fuzz/4/findings/queue/id:003016,src:002946,op:flip2,pos:52,+cov
+28203d66d1da0e202815a6770d16c86223297090 ar/afl/sqlite3/sqlite3_fuzz/4/findings/queue/id:003067,src:003016,op:arith8,pos:15,val:-33,+cov
+955d69172f532b9ebb467ae2f65f831352396568 ar/afl/sqlite3/sqlite3_fuzz/4/findings/queue/id:003104,src:003067,op:flip1,pos:29,+cov
+9efb8ea4a703a32e15df9c76c098bed4f83c9927 ar/afl/sqlite3/sqlite3_fuzz/4/findings/queue/id:003151,src:003104,op:arith8,pos:30,val:-6,+cov
+ec044f7a2956e1d0dc8710643a379d59fbf3fb70 ar/afl/sqlite3/sqlite3_fuzz/4/findings/queue/id:003184,src:003151,op:flip4,pos:28,+cov
+79577211db355239822497abb588b009ff65e648 ar/afl/sqlite3/sqlite3_fuzz/4/findings/crashes/id:000015,sig:11,src:003184,op:arith8,pos:31,val:+11

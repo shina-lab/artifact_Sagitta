@@ -1,0 +1,2 @@
+25ef0fa42df140054a6e05699f2f6ceb0fd5f3a6 ar/afl/poppler/pdf_fuzzer/0/findings/queue/id:000009,orig:95-customlists-biber.pdf
+22ff9a99d669411a31469dc6d414f216653221a3 ar/afl/poppler/pdf_fuzzer/0/findings/crashes/id:000117,sig:11,src:000009,op:arith8,pos:10912,val:+3

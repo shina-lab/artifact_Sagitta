@@ -1,0 +1,2 @@
+6fc48a8cc9ecf4d32a3f86c07ee57567f29de3f1 ar/afl/poppler/pdf_fuzzer/0/findings/queue/id:000000,orig:1-criticalnotes.pdf
+815e510582dbf848322e526467347407e6320aed ar/afl/poppler/pdf_fuzzer/0/findings/crashes/id:000015,sig:11,src:000000,op:arith8,pos:109,val:+12

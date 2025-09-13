@@ -1,0 +1,2 @@
+0ac162cd614fa5bbff8e9fbec403187125fc3aa3 /home/aoki/shina-lab/project-ultimate-sanitizer/magma-artifact/ar/aflplusplus/openssl/client/5/findings/queue/id:000086,time:0,orig:0ac162cd614fa5bbff8e9fbec403187125fc3aa3
+8ce65c0633e35d7a16a5c750fd764c4a6368c397 /home/aoki/shina-lab/project-ultimate-sanitizer/magma-artifact/ar/aflplusplus/openssl/client/5/findings/crashes/id:000017,sig:11,src:000086,time:326111084,op:colorization,rep:128

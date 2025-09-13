@@ -1,0 +1,15 @@
+672e1b5ca4fd92aafd00ea808fc75d0d8b34c29b ar/moptafl/libtiff/tiff_read_rgba_fuzzer/0/findings/queue/id:000020,orig:not_kitty.tiff
+421aae4f366ccdd7c5be66b6728a5b1853958a6d ar/moptafl/libtiff/tiff_read_rgba_fuzzer/0/findings/queue/id:000377,src:000020,op:MOpt-havoc,rep:2,+cov
+c99b0964fa38c8616af6a2958dc184fc6cac7a1b ar/moptafl/libtiff/tiff_read_rgba_fuzzer/0/findings/queue/id:000816,src:000377,op:MOpt-core-havoc,rep:2,+cov
+1a3ff109d8fa7f639b23eb891a6d70146f271ac6 ar/moptafl/libtiff/tiff_read_rgba_fuzzer/0/findings/queue/id:005099,src:000816+004932,op:MOpt-core-splice,rep:2,+cov
+aaf74b13f486b66007ac5ec7e9e0e4526a2845b9 ar/moptafl/libtiff/tiff_read_rgba_fuzzer/0/findings/queue/id:005232,src:005099,op:MOpt-havoc,rep:2,+cov
+db74f2cbb899ba08ee091e716332feec02ee06ed ar/moptafl/libtiff/tiff_read_rgba_fuzzer/0/findings/queue/id:005297,src:005232,op:MOpt-core-havoc,rep:2,+cov
+8624f3d2d4c57f507eb5f5925242d0acb278577b ar/moptafl/libtiff/tiff_read_rgba_fuzzer/0/findings/queue/id:005325,src:005297+003387,op:MOpt-core-splice,rep:4,+cov
+2bde7d695cef4eda538822c279cca1b37bf52631 ar/moptafl/libtiff/tiff_read_rgba_fuzzer/0/findings/queue/id:005393,src:005325+004992,op:MOpt-core-splice,rep:8,+cov
+5d9eb881f384e625bea8609d57342e7471e3cd51 ar/moptafl/libtiff/tiff_read_rgba_fuzzer/0/findings/queue/id:005435,src:005393,op:MOpt-havoc,rep:128
+2d36e03187f6ee4dc9c1c15bcb2670d2de127422 ar/moptafl/libtiff/tiff_read_rgba_fuzzer/0/findings/queue/id:005444,src:005435+002786,op:MOpt-core-splice,rep:32
+88460bfc561327eb61eead6b9004015f8b0cdaf7 ar/moptafl/libtiff/tiff_read_rgba_fuzzer/0/findings/queue/id:005450,src:005444,op:MOpt-core-havoc,rep:4,+cov
+a3f74f9e2f33115b65a19eed3c592235b4c2bdaa ar/moptafl/libtiff/tiff_read_rgba_fuzzer/0/findings/queue/id:005458,src:005450,op:MOpt-core-havoc,rep:8,+cov
+42b0aa15be5722e0b24f0bb827dc983e2e59751e ar/moptafl/libtiff/tiff_read_rgba_fuzzer/0/findings/queue/id:005469,src:005458+001587,op:MOpt-core-splice,rep:2
+1dd511647aa2e8cdd65e54ffc4febf6c7737bcae ar/moptafl/libtiff/tiff_read_rgba_fuzzer/0/findings/queue/id:006022,src:005469,op:MOpt-core-havoc,rep:2
+29367f9cdba0e770c3b6a2f081c07db679b18009 ar/moptafl/libtiff/tiff_read_rgba_fuzzer/0/findings/crashes/id:000295,sig:11,src:006022+003019,op:MOpt-core-splice,rep:4

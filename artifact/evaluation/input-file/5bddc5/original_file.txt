@@ -1,0 +1,4 @@
+input-0: artifact/aflplusplus/php/exif/0/findings/queue/id:000004,time:0,orig:bug54002_2.jpeg
+input-1: artifact/aflplusplus/php/exif/0/findings/queue/id:000340,src:000004,time:200436,op:ext_AO,pos:166,+cov
+input-2: artifact/aflplusplus/php/exif/0/findings/queue/id:002137,src:000340,time:107307019,op:flip4,pos:396
+input-3: artifact/aflplusplus/php/exif/0/findings/crashes/id:000113,sig:11,src:002137,time:111768358,op:arith8,pos:472,val:+31

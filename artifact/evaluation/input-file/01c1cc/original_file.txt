@@ -1,0 +1,7 @@
+input-0: artifact/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:000001,time:0,orig:not_kitty_alpha.png
+input-1: artifact/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:000252,src:000001,time:10231,op:arith8,pos:133,val:-25
+input-2: artifact/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:001976,src:000252+001921,time:26106628,op:splice,rep:2
+input-3: artifact/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:001997,src:001976,time:27239976,op:ext_AO,pos:233
+input-4: artifact/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:002327,src:001997,time:79834132,op:flip1,pos:252
+input-5: artifact/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:003716,src:002327+003706,time:577755967,op:splice,rep:2,+cov
+input-6: artifact/aflplusplus/libpng/libpng_read_fuzzer/2/findings/crashes/id:000099,sig:11,src:003716,time:578590013,op:flip1,pos:5045

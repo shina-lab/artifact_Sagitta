@@ -1,0 +1,3 @@
+input-0: artifact/aflplusplus/libpng/libpng_read_fuzzer/0/findings/queue/id:000003,time:0,orig:not_kitty_icc.png
+input-1: artifact/aflplusplus/libpng/libpng_read_fuzzer/0/findings/queue/id:000321,src:000003,time:21618,op:colorization,rep:8,+cov
+input-2: artifact/aflplusplus/libpng/libpng_read_fuzzer/0/findings/crashes/id:000041,sig:11,src:000321,time:6764197,op:arith8,pos:24,val:-6

@@ -1,0 +1,2 @@
+774d96e7e04c32f0b5e4b9ae545421d0f550b25d ar/afl/libxml2/libxml2_xml_read_memory_fuzzer/0/findings/queue/id:000072,orig:AttributeDefaultLegal
+a0acda2851296cf96a3db7942db30a909169abe4 ar/afl/libxml2/libxml2_xml_read_memory_fuzzer/0/findings/crashes/id:000183,sig:11,src:000072,op:arith8,pos:80,val:-11

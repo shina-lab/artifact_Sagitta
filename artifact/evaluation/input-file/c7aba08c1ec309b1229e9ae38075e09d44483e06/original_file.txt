@@ -1,0 +1,4 @@
+70191d5b7d0d1e5fbb5273210a334c092cdd41b8 ar/aflplusplus/libtiff/tiffcp/5/findings/queue/id:000000,time:0,orig:11.tif
+54441a02d85653cf64f2bc7680941432051d8462 ar/aflplusplus/libtiff/tiffcp/5/findings/queue/id:000114,src:000000,time:7007,op:its,pos:0
+97d04711599ab9c5494ba3f23abb0105228f08ca ar/aflplusplus/libtiff/tiffcp/5/findings/queue/id:000792,src:000114,time:12645487,op:flip1,pos:8316,+cov
+c7aba08c1ec309b1229e9ae38075e09d44483e06 ar/aflplusplus/libtiff/tiffcp/5/findings/crashes/id:000044,sig:11,src:000792,time:58854500,op:its,rep:16

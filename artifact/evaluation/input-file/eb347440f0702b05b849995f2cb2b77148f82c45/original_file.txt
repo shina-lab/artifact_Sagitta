@@ -1,0 +1,10 @@
+a7878a83af574445eee4498df9045bf55947729b ar/afl/libpng/libpng_read_fuzzer/8/findings/queue/id:000000,orig:not_kitty.png
+152e1a7451548d18fd17919bc5016d1d23cd5e4a ar/afl/libpng/libpng_read_fuzzer/8/findings/queue/id:000032,src:000000,op:flip1,pos:25,+cov
+879ca38f99127e9b66316693839330223f012b8d ar/afl/libpng/libpng_read_fuzzer/8/findings/queue/id:000317,src:000032,op:ext_AO,pos:37,+cov
+f8736abc8d9a5bb924043b91f79abdfd718172d6 ar/afl/libpng/libpng_read_fuzzer/8/findings/queue/id:000477,src:000317,op:arith8,pos:36,val:-19,+cov
+253eccb6330f078fd0e8be292900bf5b311edcc4 ar/afl/libpng/libpng_read_fuzzer/8/findings/queue/id:000952,src:000477+000375,op:splice,rep:4,+cov
+30ceb46c8f4b2fc4c48e4072faadbd2ba3b5ec72 ar/afl/libpng/libpng_read_fuzzer/8/findings/queue/id:000962,src:000952,op:ext_AO,pos:42
+7024ec16ce900d8b7cd87bcc447c36a93fc856dc ar/afl/libpng/libpng_read_fuzzer/8/findings/queue/id:000964,src:000962,op:flip1,pos:108
+d8f51365e175ed3be770adaa1af13aa5d602d24a ar/afl/libpng/libpng_read_fuzzer/8/findings/queue/id:000970,src:000964,op:ext_AO,pos:44
+920d44356f7b7095302054d2752c7c0fc03faaff ar/afl/libpng/libpng_read_fuzzer/8/findings/queue/id:000974,src:000970,op:arith8,pos:46,val:+31,+cov
+eb347440f0702b05b849995f2cb2b77148f82c45 ar/afl/libpng/libpng_read_fuzzer/8/findings/crashes/id:000073,sig:11,src:000974+001045,op:splice,rep:2

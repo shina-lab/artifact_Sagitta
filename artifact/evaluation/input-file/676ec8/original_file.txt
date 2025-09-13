@@ -1,0 +1,3 @@
+input-0: artifact/aflplusplus/libxml2/libxml2_xml_read_memory_fuzzer/0/findings/queue/id:000290,time:0,orig:cdata2
+input-1: artifact/aflplusplus/libxml2/libxml2_xml_read_memory_fuzzer/0/findings/queue/id:006460,src:000290,time:17434632,op:havoc,rep:4,+cov
+input-2: artifact/aflplusplus/libxml2/libxml2_xml_read_memory_fuzzer/0/findings/crashes/id:001103,sig:11,src:006460,time:369983649,op:havoc,rep:2

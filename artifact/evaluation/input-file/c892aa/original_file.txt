@@ -1,0 +1,2 @@
+input-0: artifact/aflplusplus/libxml2/libxml2_xml_read_memory_fuzzer/0/findings/queue/id:000042,time:0,orig:582906-1-prog2-include.xsd
+input-1: artifact/aflplusplus/libxml2/libxml2_xml_read_memory_fuzzer/0/findings/crashes/id:000085,sig:11,src:000042,time:350805,op:havoc,rep:2

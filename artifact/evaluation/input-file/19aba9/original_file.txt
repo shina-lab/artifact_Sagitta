@@ -1,0 +1,3 @@
+input-0: artifact/aflplusplus/php/exif/0/findings/queue/id:000056,time:0,orig:zero_length_makernote_leak.tiff
+input-1: artifact/aflplusplus/php/exif/0/findings/queue/id:001031,src:000056,time:7486713,op:arith8,pos:34,val:+10,+cov
+input-2: artifact/aflplusplus/php/exif/0/findings/crashes/id:000063,sig:11,src:001031,time:29799513,op:its,rep:64

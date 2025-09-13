@@ -1,0 +1,12 @@
+d37910426ef5c47f688f2b2526faf144277434e0 ar/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:000001,time:0,orig:not_kitty_alpha.png
+783b65f24c949f97afee435e8cf2db5f783dbe1e ar/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:000263,src:000001,time:12702,op:int16,pos:74,val:-1
+75b5f09681ec61c4e110adcb077541a4d54b7397 ar/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:003635,src:000263+003161,time:542441996,op:splice,rep:2
+5a3cc05dd174d1893b214ce64790b5661dddd5ba ar/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:003637,src:003635,time:542619513,op:int32,pos:289,val:+1,+cov
+24a05bfc842c7d27f7b846db1dba87d465099770 ar/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:003641,src:003637,time:543298294,op:ext_AO,pos:301
+ca06cd4838ab39ca93f33b25779ef4809f8c6de0 ar/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:003646,src:003641,time:543573752,op:havoc,rep:4
+00668a7026adcf6c44639a7d4179eeb99f1a3434 ar/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:003647,src:003646,time:543576979,op:colorization,rep:2
+f248c863cbbc2e6e41425f7201cae7210d154b09 ar/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:003652,src:003647,time:548161107,op:havoc,rep:8
+c19dcd21083487600f8407a5bee44fb0c0eee410 ar/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:003656,src:003652,time:548278237,op:int16,pos:287,val:be:+64
+f0a03f7b41db72fc1f0c4d33341c5b0e89290f46 ar/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:003725,src:003656+003211,time:594764977,op:splice,rep:128
+f5eb85b725b463281586eff903ab9fa7e987b7c3 ar/aflplusplus/libpng/libpng_read_fuzzer/2/findings/queue/id:003731,src:003725,time:594780265,op:havoc,rep:32,+cov
+a2e7b0db62bc61145d305d537acd61c5879cb208 ar/aflplusplus/libpng/libpng_read_fuzzer/2/findings/crashes/id:000108,sig:11,src:003731+002037,time:594827144,op:splice,rep:16

@@ -1,0 +1,7 @@
+2ab2b5d84a6e003b4556ac9678b787040a361ad1 ar/aflplusplus/libtiff/tiffcp/5/findings/queue/id:000020,time:0,orig:not_kitty.tiff
+fa403417aa938e128626c9e6f366dea3003cf5d7 ar/aflplusplus/libtiff/tiffcp/5/findings/queue/id:000459,src:000020,time:10104248,op:colorization,rep:32,+cov
+ce468686c916624c7407f81b4df1921e7a35303c ar/aflplusplus/libtiff/tiffcp/5/findings/queue/id:001207,src:000459,time:51841309,op:arith8,pos:292,val:+21,+cov
+e3f09958100ff12f49edf9d70c8e161364dff91d ar/aflplusplus/libtiff/tiffcp/5/findings/queue/id:002001,src:001207,time:138679234,op:ext_AO,pos:285,+cov
+6309ce8143ea5a9222d004cafbc0eea4ceaf11eb ar/aflplusplus/libtiff/tiffcp/5/findings/queue/id:003102,src:002001,time:235720304,op:flip1,pos:124
+65110d9f9ff0cab91bdd0f1db38e2dd15133567f ar/aflplusplus/libtiff/tiffcp/5/findings/queue/id:004193,src:003102,time:308715560,op:flip1,pos:172
+17c3d4bf1af3198b4256a80b875f7d45502e2fad ar/aflplusplus/libtiff/tiffcp/5/findings/crashes/id:000116,sig:11,src:004193,time:358876578,op:arith8,pos:136,val:+20

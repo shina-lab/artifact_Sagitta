@@ -1,0 +1,1 @@
+input-0: artifact/aflplusplus/libxml2/libxml2_xml_read_memory_fuzzer/0/findings/crashes/id:000377,sig:11,src:000108,time:5097949,op:havoc,rep:128

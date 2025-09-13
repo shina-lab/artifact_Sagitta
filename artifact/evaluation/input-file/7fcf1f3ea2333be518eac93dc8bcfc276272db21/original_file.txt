@@ -1,0 +1,10 @@
+1b2a9cb9d492782e5db19619e2f7926822b53a5e ar/afl/libtiff/tiff_read_rgba_fuzzer/7/findings/queue/id:000013,orig:7.tif
+e6014bfd541e3f3f7233296ef3e6a013f754ea40 ar/afl/libtiff/tiff_read_rgba_fuzzer/7/findings/queue/id:000290,src:000013,op:flip2,pos:1874
+82dff27c09c166cad6969f1636be43e97abda38f ar/afl/libtiff/tiff_read_rgba_fuzzer/7/findings/queue/id:000963,src:000290,op:flip1,pos:1910
+c75fe15de6275c44d320bce6bf9b868566a34b97 ar/afl/libtiff/tiff_read_rgba_fuzzer/7/findings/queue/id:001637,src:000963,op:flip4,pos:1858,+cov
+d7775d2223b7b7167186d5d1f834967fe045a44a ar/afl/libtiff/tiff_read_rgba_fuzzer/7/findings/queue/id:002364,src:001637,op:arith16,pos:1870,val:-7,+cov
+7df270a143ae276b7fb3b97bd8c6fd719588549e ar/afl/libtiff/tiff_read_rgba_fuzzer/7/findings/queue/id:002897,src:002364,op:flip1,pos:1910
+40ba4b3fae2539b7997f4424f0d367a10801f2e5 ar/afl/libtiff/tiff_read_rgba_fuzzer/7/findings/queue/id:004560,src:002897,op:arith8,pos:1942,val:-18
+73b7e9837a8989902d48f28ab2d5f9b89ed50743 ar/afl/libtiff/tiff_read_rgba_fuzzer/7/findings/queue/id:004708,src:004560,op:ext_AO,pos:1936
+6c282ee4b01e1102f5a2a33c1e69a87eeb3d3590 ar/afl/libtiff/tiff_read_rgba_fuzzer/7/findings/queue/id:004839,src:004708,op:havoc,rep:2,+cov
+7fcf1f3ea2333be518eac93dc8bcfc276272db21 ar/afl/libtiff/tiff_read_rgba_fuzzer/7/findings/crashes/id:000117,sig:11,src:004839,op:arith8,pos:1954,val:-18

@@ -1,0 +1,2 @@
+e462c6f3f1ad7c378e79016f75e6960797f7e670 ar/afl/openssl/asn1/5/findings/queue/id:001179,orig:e462c6f3f1ad7c378e79016f75e6960797f7e670
+a5b412c7572ca8c613d74c8eeb1021b5fd213d40 ar/afl/openssl/asn1/5/findings/crashes/id:000002,sig:11,src:001179,op:int16,pos:5,val:+1

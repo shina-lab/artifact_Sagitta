@@ -1,0 +1,2 @@
+input-0: artifact/aflplusplus/poppler/pdfimages/0/findings/queue/id:000017,time:0,orig:ZapfDingbats.pdf
+input-1: artifact/aflplusplus/poppler/pdfimages/0/findings/crashes/id:000157,sig:11,src:000017,time:78359533,op:flip2,pos:489

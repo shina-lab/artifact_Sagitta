@@ -1,0 +1,3 @@
+1cae6d97187a81b51003bac48873e9ee9b2f9bfe ar/aflplusplus/libtiff/tiffcp/0/findings/queue/id:000020,time:0,orig:not_kitty.tiff
+9782753b01c06467971cbdb68d0a50171ec8f7ee ar/aflplusplus/libtiff/tiffcp/0/findings/queue/id:000707,src:000020,time:7142047,op:havoc,rep:8,+cov
+6256014af6e239bcd904b49d6f2ad37ca6818ea7 ar/aflplusplus/libtiff/tiffcp/0/findings/crashes/id:000034,sig:11,src:000707,time:39428165,op:its,rep:2

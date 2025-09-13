@@ -1,0 +1,3 @@
+input-0: artifact/aflplusplus/libtiff/tiffcp/0/findings/queue/id:000020,time:0,orig:not_kitty.tiff
+input-1: artifact/aflplusplus/libtiff/tiffcp/0/findings/queue/id:000483,src:000020,time:6993423,op:its,rep:8,+cov
+input-2: artifact/aflplusplus/libtiff/tiffcp/0/findings/crashes/id:000017,sig:11,src:000483,time:35487730,op:its,rep:16

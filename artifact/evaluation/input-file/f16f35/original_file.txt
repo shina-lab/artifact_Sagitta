@@ -1,0 +1,2 @@
+input-0: artifact/aflplusplus/poppler/pdf_fuzzer/0/findings/queue/id:000019,time:0,orig:allec.man1.pdf
+input-1: artifact/aflplusplus/poppler/pdf_fuzzer/0/findings/crashes/id:000165,sig:11,src:000019,time:489765866,op:havoc,rep:64

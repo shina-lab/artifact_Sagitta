@@ -1,0 +1,2 @@
+input-0: artifact/aflplusplus/openssl/x509/0/findings/queue/id:000170,time:0,orig:1dc08e50a3cf3315fa66cdc6810037cf162ab182
+input-1: artifact/aflplusplus/openssl/x509/0/findings/crashes/id:000052,sig:11,src:000170,time:519063560,op:flip1,pos:748
