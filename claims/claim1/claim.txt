@@ -1,72 +1,90 @@
-=== Claim 1
-This artifact reproduces the localization graph generation in section 6.4.2 (one of evaluated case TIF008) of our paper and visualized in Figure 5. 
+=== Claim 1: Localization Graph Reproduction
+This artifact demonstrates that our technique can /* FIXME: 明確なクレーム文の追加 */.
 
-The artifact demonstrates our software crash root cause analysis technique through four phases: 
+Through four phases, we reproduce case study 6.4.2 (one of evaluated case TIF008) of our paper and visualized in Figure 5:
+
 (1) TIF008 bug reproduction using the Magma framework, 
 (2) instrumented libtiff compilation with polytracker for taint analysis, 
 (3) localization graph generation via data flow analysis, and 
 (4) review of generated localization graph (in SVG format) against the Figure 5 results.
 
-Required disk space: 50 GB.
+Generated localization graph:
+    For crash: claims/claim1/diff.TIF008.crash-000117.taint.svg
+    For non-crash: Not available (Non-crash input does not execute the MAGMA canary for TIF008, so no localization graph is generated)
+Required disk space: 100 GB.
 Required memory: 32 GB.
-Estimated time: 5 minutes for phase (1)-(3), and 5-10 minutes for phase (4).
+Estimated time: 12 minutes for phase 1-3, and 5-10 minutes for phase 4.
 
 
---- Excersise Steps
-1. Run run.sh to perform phase (1)-(3).
-    - claim/clam1 内に生成された局所化グラフ（svg）が現れれば、われわれのソースコード（in artifact/）は正常にビルドされ、動作したことが証明されます。
-2. Please follow a guidance described below to perform phase (4).
+--- Exercise Steps
+1. Run run.sh to perform phase 1-3.
+    - Success of phase 2 proves that our modified polytracker successfully instruments libtiff.
+    - Success of phase 3 proves that our tool generates localization graphs (SVG file appears in claims/claim1/).
+2. Follow the guidance described below to perform phase 4.
 
 
---- Guidance for phase (4)
-phase 4では、生成された局所化グラフ（svg形式）がFigure 5に相当することを確認します。
+--- Guidance for phase 4
+In phase 4, confirm that the generated localization graph (in svg format) corresponds to Figure 5.
 
-生成された局所化グラフ：claims/claim1/diff.TIF008.crash-000117.taint.svg
+Success criteria for Phase 4:
+1. Root cause node "crash-000117[0x7a2]" can be found.
+2. All 4 key nodes (root cause, node 2, node 3, node 4) appear in sequence.
+3. The data flow path connects these nodes with directed edges.
+4. The terminal node shows MAGMA_LOG (equivalent to the crash site in Figure 5).
 
-svgファイルはWebブラウザで閲覧すると快適です。
-生成された局所化グラフは大きいので画面には収まりません。効率的なアーティファクト評価のために、どのようにこのグラフを辿るべきかを以下に案内します。
+We recommend to view the svg file in your favorite web browser.
+The generated localization graph is large and does not fit on the screen. 
+For efficient artifact evaluation, we navigate you along this graph.
 
-まず、グラフの上流を訪れます。
-ブラウザのページ内検索（Ctrl+F）で "crash-000117[0x7a2]" を検索すると、Figure 5で根本原因とラベルした頂点ノードが画面に映ります。
-矢印の向きに従って、下流側に向かってグラフを辿ってください。
+First, we visit the upstream of the graph.
+Search for "crash-000117[0x7a2]" using the browser's in-page search (Ctrl+F), and the vertex node labeled as the root cause in Figure 5 will appear on your screen.
+Follow the direction of the arrows and trace the graph toward the downstream side.
 
-すると、difference highlight された（色が付いた）ノード "v32 = (uint32_t) va_arg(ap, uint32_t);" に遭遇します。
-続けて、下流側に向かってグラフを辿ってください。
+Then, you will encounter the difference highlighted (colored) node "v32 = (uint32_t) va_arg(ap, uint32_t);".
+Continue tracing the graph toward the downstream side.
 
-次にノード "td->td_tilewidth = v32;" に遭遇します。TIF008の根本原因の説明に必要なノード2です。
-続けて、下流側に向かってグラフを辿ってください。
-このあと分岐があり、一方が正解です。
+Next, you will encounter the node "td->td_tilewidth = v32;". 
+This is node 2 necessary for explaining the root cause of TIF008.
+Continue tracing the graph toward the downstream side.
+There will be a branch after this.
+Follow the path that leads to the "imagewidth = tif->tif_dir.td_tilewidth;". 
+This is node 3 necessary for explaining the root cause of TIF008.
+Continue tracing the graph toward the downstream side.
 
-最後の差分ノード "imagewidth = tif->tif_dir.td_tilewidth;" に遭遇します。TIF008の根本原因の説明に必要なノード3です。
-続けて、下流側に向かってグラフを辿ってください。
+You will encounter the node "while (n-- > 0 && npixels < imagewidth)" labeled as dominance integration in Figure 5. 
+This is node 4 necessary for explaining the root cause of TIF008.
+Follow the thick blue edge labeled "dominates" that extends from this node.
 
-Figure 5でDominance Integrationをラベルしたノード "while (n-- > 0 && npixels < imagewidth)" に遭遇します。TIF008の根本原因の説明に必要なノード4です。
-このノードから生えているdominatesというラベルが付いた青色の太い辺をを辿ってください。
+At last, you will arrive at "MAGMA_LOG("TIF008", op_offset >= scanline);", the terminal node of the localization graph.
 
-そうして局所化グラフの末尾ノード "MAGMA_LOG("TIF008", op_offset >= scanline);" に到着します。
+You may notice that the code shown at the crash site in Figure 5 differs from the code of the bottommost node in the generated localization graph, but in conclusion, this is not a problem.
+The code where the crash actually occurs is SETPIXEL(op, grey); is displayed for clarifying in Figure 5.
+On the other hand, Magma's canary MAGMA_LOG---displayed in the svg---is code that determines the occurrence of a crash (refer to our paper section 6.1 Dataset for details), and since we used it as the starting point to generate the localization graph.
 
-Figure 5 の Crash Site で表示したコードと、生成された局所グラフの最下部のノードのコードが異なることにお気づきでしょうが、結論、これは問題ありません。
-実際にクラッシュが発生するコードは `SETPIXEL(op, grey);` です。Figure 5ではわかりやすさのため、こちらのコードを表示しました。
-一方、Magmaのカナリア `MAGMA_LOG` はクラッシュの発生を判定するコード（our paper section 6.1 Datasetを参照）であり、局所化グラフを作るときの起点としたため、svgではこちらが表示されています。
-
-以下はクラッシュ箇所周辺のlibtiffのソースコードです。
-結局、両者はコード上は結局同じ箇所を指しますので、この表示の差異は問題ありません。
+The following code is the libtiff source code around the crash location.
+Ultimately, both of SETPIXEL and MAGMA_LOG refer to the same location in the code, so this display difference is not a problem.
 
 ```
                 while (n-- > 0 && npixels < imagewidth)
 #endif
                 {
 #ifdef MAGMA_ENABLE_CANARIES
-                    MAGMA_LOG("TIF008", op_offset >= scanline); // 局所化グラフが表示したコード
+                    MAGMA_LOG("TIF008", op_offset >= scanline); // Code displayed by the localization graph
 #endif
-					SETPIXEL(op, grey); // 実際のクラッシュ箇所。Figure 5で表示したコード
+					SETPIXEL(op, grey); // Actual crash site. Code displayed in Figure 5
                 }
 ```
 
-これでphase 4終了です。
+Phase 4 and claim 1 is over. Thank you.
 
 
----- List of source code and input/output files
+--- Common issues
+- If SVG file is not generated: Check that Phase 1-3 completed without errors.
+- If nodes are hard to find: Use browser zoom-in/out for better visibility.
+- If run.sh fails: Check disk space.
+
+
+--- List of source code and input/output files
 
 Software components (source code): 
     (1) Magma framework (modified by us in section 6.1): artifact/magma-v1.2 

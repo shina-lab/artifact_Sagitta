@@ -4,14 +4,14 @@ This artifact contains source code for Section 6 of our paper.
 
 Dependencies: Ubuntu 22.04, Docker (usable from normal user), x86_64 machine, sudo.
 Infrastructure: Standard x86_64 machine (no special devices required; recommend 4 CPUs + 32GB RAM).
-Expected runtime: 30 minutes (installation 15 minutes + claim 15 minutes).
+Expected runtime: 40 minutes (installation 15 minutes + claim 25 minutes).
 Repository: https://github.com/shina-lab/artifact_Sagitta
 To reproduce Claim 1: run install.sh then claims/claim1/run.sh.
 Expected output is in claims/claim1/expected/.
 
 
 --- List of source code and input/output files
-どのフォルダーがコード、ベンチマーク、データなどに対応するかなどの説明します。
+This explains which folders correspond to source code and data.
 
 Software components (source code): 
     artifact/evaluation
