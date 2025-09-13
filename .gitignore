@@ -1,3 +1,5 @@
 polytracker.log
 claims/claim1/*.svg
 artifact/.env
+
+compile_commands.json
