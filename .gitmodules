@@ -4,3 +4,6 @@
 [submodule "artifact/magma-v1.2"]
 	path = artifact/magma-v1.2
 	url = git@github.com:shina-lab/software_aoki_magma.git
+[submodule "artifact/gllvm"]
+	path = artifact/gllvm
+	url = https://github.com/SRI-CSL/gllvm.git

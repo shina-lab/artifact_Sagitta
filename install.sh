@@ -3,9 +3,13 @@
 artifact_dir=$(cd $(dirname $0)/artifact; pwd)
 set -eux
 
-sudo apt update -y
-sudo apt install -y snapd
 export PATH=$PATH:$HOME/.local/bin
+export PATH=$PATH:$HOME/go/bin
+
+### Collect dependencies of Sagitta
+git submodule update --init
+
+sudo apt update -y
 
 sudo apt install -y python3 python3-pip
 
@@ -45,10 +49,9 @@ sudo apt install -y python3 python3-pip
 
 ### Install Scala CLI
 if ! command -v scala-cli &> /dev/null; then
-    curl -fL https://github.com/Virtuslab/scala-cli/releases/latest/download/scala-cli-x86_64-pc-linux.gz | gzip -d > scala-cli
-    chmod +x scala-cli
-    sudo mv scala-cli /usr/local/bin/scala-cli
+    curl -sSLf https://scala-cli.virtuslab.org/get | sh
 fi
+source ~/.profile
 
 ### Install PolyTracker
 cd ${artifact_dir}/polytracker
@@ -60,7 +63,8 @@ cd ${artifact_dir}/work-desk
 sg docker -c "scala-cli run ./setup.sc -v -- polytracker"
 sg docker -c "scala-cli run ./setup.sc -v -- polytracker.slim"
 
-### Collect dependencies of Sagitta
-git submodule update --init --recursive
+### Install additional requirements for PolyTracker
+cd ${artifact_dir}/gllvm
+make install
 
-echo "[*] Installation completed."
+echo -e "----\n[*] Installation completed."

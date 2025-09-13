@@ -6,6 +6,10 @@
 
 set -e  # Exit on any error
 
+export PATH=$PATH:$HOME/.local/bin
+export PATH=$PATH:$HOME/go/bin
+source ~/.profile
+
 # Get the script directory and set up paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ARTIFACT_DIR="$SCRIPT_DIR"
@@ -34,7 +38,7 @@ docker_operator() {
     local task_name="$1"
     local bash_command="$2"
     echo "Executing docker operator task: $task_name"
-    echo "$bash_command" | scala-cli "$ARTIFACT_DIR/work-desk/exec.scala" -- polytracker
+    echo -e "export PATH=$PATH:$HOME/go/bin\n$bash_command" | scala-cli "$ARTIFACT_DIR/work-desk/exec.scala" -- polytracker
 }
 
 echo "Starting build_libtiff pipeline..."
@@ -73,4 +77,4 @@ echo "Task: build_tracee"
 docker_operator "build_tracee" "CC=$CC CXX=$CXX CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\" LDFLAGS=$LDFLAGS LIBS=\"$LIBS\" TARGET=$target_libtiff OUT=$target_libtiff $target_libtiff/build.polytracker.sh"
 
 echo "========================================"
-echo "build_libtiff pipeline completed successfully!"
+echo "[*] build_libtiff pipeline completed successfully!"
