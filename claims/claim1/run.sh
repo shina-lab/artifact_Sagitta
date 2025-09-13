@@ -1,8 +1,11 @@
 #!/bin/sh
-set -eux
 
 script_dir=$(cd $(dirname $0); pwd)
+artifact_dir=$(cd ${script_dir}/../../artifact; pwd)
+set -eux
 
-AIRFLOW_HOME=${script_dir}/artifact/airflow \
-    airflow standalone &
-python3 ${script_dir}/artifact/pipeline.py
+### Remove generated results
+${script_dir}/*.svg
+
+### Perform phase 3, 4
+python3 ${artifact_dir}/pipeline.py
