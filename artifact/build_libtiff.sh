@@ -34,7 +34,7 @@ docker_operator() {
     local task_name="$1"
     local bash_command="$2"
     echo "Executing docker operator task: $task_name"
-    echo "$bash_command" | ~/.cache/scalacli/local-repo/bin/scala-cli/scala-cli "$ARTIFACT_DIR/work-desk/exec.scala" -- polytracker
+    echo "$bash_command" | scala-cli "$ARTIFACT_DIR/work-desk/exec.scala" -- polytracker
 }
 
 echo "Starting build_libtiff pipeline..."

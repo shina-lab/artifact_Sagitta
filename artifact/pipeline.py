@@ -55,7 +55,7 @@ def run_analysis():
     def run_in_docker(bash_command, cwd):
         HOME = os.environ["HOME"]
         subprocess.run(
-            f"{HOME}/.cache/scalacli/local-repo/bin/scala-cli/scala-cli {ARTIFACT_DIR}/work-desk/exec.scala -- polytracker.slim",
+            f"scala-cli {ARTIFACT_DIR}/work-desk/exec.scala -- polytracker.slim",
             cwd=cwd,
             input=bash_command,
             shell=True,
