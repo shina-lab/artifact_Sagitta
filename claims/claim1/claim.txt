@@ -81,8 +81,3 @@ Input pair:
         crash input: crash-000117
 
 Output format: SVG (for graphing).
-
-
---- Note: Process time and memory usage
-
-/usr/bin/time -v 

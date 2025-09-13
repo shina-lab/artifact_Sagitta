@@ -62,7 +62,7 @@ def run_analysis():
             check=True
         )
     
-    print("[*] Phase 2: Run the analysis")
+    print("[*] Phase 3: Start analysis")
     run_in_docker(b"source ~/.profile; ./run.sc", f"{ARTIFACT_DIR}/evaluation/libtiff-TIF008")
     print("[*] Phase 3: Done")
     

@@ -64,6 +64,7 @@ sg docker -c "scala-cli run ./setup.sc -v -- polytracker"
 sg docker -c "scala-cli run ./setup.sc -v -- polytracker.slim"
 
 ### Install additional requirements for PolyTracker
+sudo apt install -y golang-go
 cd ${artifact_dir}/gllvm
 make install
 
