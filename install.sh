@@ -59,5 +59,7 @@ cd ${artifact_dir}/work-desk
 sg docker -c "scala-cli run ./setup.sc -v -- polytracker"
 sg docker -c "scala-cli run ./setup.sc -v -- polytracker.slim"
 
+### Collect dependencies of Sagitta
+git submodule update --init --recursive
 
 echo "[*] Installation completed."

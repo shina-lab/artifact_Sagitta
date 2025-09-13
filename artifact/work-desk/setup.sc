@@ -13,7 +13,6 @@ def dockerBuild(name: String, args: Seq[String]): os.CommandResult = {
   println(s"[*] Building ${name}")
 
   var cmd = Seq(
-    "sudo",
     "docker",
     "build"
   ) ++ args ++ Seq(

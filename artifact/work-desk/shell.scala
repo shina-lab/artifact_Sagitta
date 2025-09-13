@@ -5,7 +5,6 @@
 def dockerRun(name: String, args: Seq[String], cwd: os.Path): os.CommandResult = {
   // NOTE: Dockerがデフォルトで用意する /dev/shm は 64MB しかない
   var cmd = Seq(
-    "sudo",
     "docker",
     "run",
     "--cap-add",

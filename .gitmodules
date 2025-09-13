@@ -1,3 +1,6 @@
 [submodule "artifact/polytracker"]
 	path = artifact/polytracker
 	url = git@github.com:shina-lab/software_aoki_polytracker.git
+[submodule "artifact/magma-v1.2"]
+	path = artifact/magma-v1.2
+	url = git@github.com:shina-lab/software_aoki_magma.git
