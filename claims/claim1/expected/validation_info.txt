@@ -1,17 +1,17 @@
 === Validation Information
-In phase 4, confirm that the generated localization graph (in svg format) corresponds to Figure 5.
+In phase 4, confirm that the generated localization graph (in SVG format) corresponds to Figure 5.
 
 
 --- Success criteria for Phase 4
 1. Root cause node "crash-000117[0x7a2]" can be found.
-2. All 4 key nodes (root cause, node 2, node 3, node 4) appear.
+2. All four key nodes (root cause, node 2, node 3, node 4) appear.
 3. The data flow path connects these nodes with directed edges.
 4. The terminal node is MAGMA_LOG (equivalent to the crash site in Figure 5).
 
 
 --- Guidance for phase 4
-We recommend to view the svg file in your favorite web browser.
-The generated localization graph is large and does not fit on the screen. 
+We recommend viewing the SVG file in a web browser.
+The generated localization graph is too large to fit on the screen. 
 
 For efficient artifact evaluation, we navigate you along this graph.
 First, we visit the upstream of the graph.
@@ -22,25 +22,25 @@ Then, you will encounter "v32 = (uint32_t) va_arg(ap, uint32_t);" with differenc
 Continue tracing the graph toward the downstream side.
 
 Next, you will encounter the node "td->td_tilewidth = v32;". 
-This is node 2 necessary for explaining the root cause of TIF008.
+This is node 2, necessary for explaining the root cause of TIF008.
 Continue tracing the graph toward the downstream side.
 There will be a branch after this.
 Follow the path that leads to the "imagewidth = tif->tif_dir.td_tilewidth;". 
-This is node 3 necessary for explaining the root cause of TIF008.
+This is node 3, necessary for explaining the root cause of TIF008.
 Continue tracing the graph toward the downstream side.
 
 You will encounter the node "while (n-- > 0 && npixels < imagewidth)" labeled as dominance integration in Figure 5. 
-This is node 4 necessary for explaining the root cause of TIF008.
+This is node 4, necessary for explaining the root cause of TIF008.
 Follow the thick blue edge labeled "dominates" that extends from this node.
 
 At last, you will arrive at "MAGMA_LOG("TIF008", op_offset >= scanline);", the terminal node of the localization graph.
 
-You may notice that the code shown at the crash site in Figure 5 differs from the code of the bottommost node in the generated localization graph, but in conclusion, this is not a problem.
+You may notice that the code shown at the crash site in Figure 5 differs from the code of the bottommost node in the generated localization graph; however, this is not a problem.
 The code where the crash actually occurs, SETPIXEL(op, grey), is displayed in Figure 5 for clarification.
-On the other hand, Magma's canary MAGMA_LOG---displayed in the svg---is code that determines the occurrence of a crash (refer to our paper section 6.1 Dataset for details), and we used it as the starting point to generate the localization graph.
+On the other hand, Magma's canary, MAGMA_LOG---displayed in the SVG---is code that determines the occurrence of a crash (refer to our paper, Section 6.1, Dataset, for details), and we used it as the starting point to generate the localization graph.
 
 The following code is the libtiff source code around the crash location.
-Ultimately, both of SETPIXEL and MAGMA_LOG refer to the same location in the code, so this display difference is not a problem.
+Ultimately, both SETPIXEL and MAGMA_LOG refer to the same location in the code, so this display difference is not a problem.
 
 ```
                 while (n-- > 0 && npixels < imagewidth)
@@ -53,11 +53,11 @@ Ultimately, both of SETPIXEL and MAGMA_LOG refer to the same location in the cod
                 }
 ```
 
-Phase 4 and claim 1 is over. Thank you.
+Phase 4 and Claim 1 are now complete. Thank you.
 
 
 --- Appendix: List of source code and input/output files
-Through Claim 1, we will show the role of each component and script so that the overall picture of the artifact can be traced.
+Based on Claim 1, we will explain the role of each component and script, providing a solid foundation for understanding the overall structure of the artifact.
 
 Software components (source code): 
     (1) Magma framework (modified by us in section 6.1): artifact/magma-v1.2 

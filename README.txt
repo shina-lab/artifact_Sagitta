@@ -2,44 +2,44 @@
 
 This artifact contains source code for Section 6 of our paper.
 
-Dependencies: Ubuntu 22.04, Docker (usable from normal user), x86_64 machine, sudo.
+Dependencies: Ubuntu 22.04, Docker (accessible from a regular user), an x86_64 machine, and sudo.
 Infrastructure: Standard x86_64 machine (no special devices required).
 Machine Spec: 4 CPUs + 32GB RAM + 100GB Storage.
 Expected runtime: 40 minutes (installation 15 minutes + claim 25 minutes).
 Repository: https://github.com/shina-lab/artifact_Sagitta
-To reproduce Claim 1: run install.sh then claims/claim1/run.sh and follow claims/claim1/expected/validation_info.txt.
+To reproduce Claim 1: run install.sh, then claims/claim1/run.sh, and follow claims/claim1/expected/validation_info.txt.
 Expected output and validation information are in claims/claim1/expected/.
 
 
 --- List of source code and input/output files
-This explains which folders correspond to source code and data.
+This section maps the artifact structure to the corresponding sections in our paper.
 
 Software components (source code): 
     artifact/evaluation
-        our analysis pipeline tailored for our tool library (used in section 6.3)
-        sub-folders contains evaluated cases (e.g. TIF008), and run.sc invokes analysis pipeline.
+        Analysis pipeline tailored for our tool (Section 6.3)
+        Contains evaluated cases (e.g., TIF008 used for Claim 1) with run.sc scripts
     artifact/magma-v1.2 
-        Magma framework (modified by us in section 6.1)
+        Modified Magma framework (Section 6.1)
     artifact/polytracker
-        polytracker (modified by us in section 5)
+        Modified PolyTracker for taint analysis (Section 5)
     artifact/taint_tracking
-        our tool (implemented in section 5)
+        Our localization graph tool implementation (Section 5)
     artifact/try-clang
-        Supplemental header file for Magma (required for build Magma and target binaries)
+        Supplemental headers for Magma compilation
     artifact/work-desk
-        Helper utility for building/running polytracker
+        Build and runtime environments for PolyTracker and our tool
     artifact/build_libtiff.sh
-        Script file to build libtiff (used for claim/claim1)
+        LibTIFF compilation script (used in Claim 1)
     artifact/pipeline.py
-        Script file to run our tool (used for claim/claim1)
+        Tool execution script (used in Claim 1)
 
 Input pair (section 6.1): 
-    In evaluation/input-file/, directories contains crash/non-crash inputs.
-    Input pair is picked from these directory by run.sc in artifact/evaluation.
+    evaluation/input-file/
+        Directories contain crash/non-crash inputs.
+        Selected automatically by run.sc scripts in artifact/evaluation/
 
 
 --- Common issues
-- If SVG file is not generated: Check that Phase 1-3 completed without errors.
+- If no SVG file is generated: Check that phase 1-3 completed without errors.
 - If nodes are hard to find: Use browser zoom-in/out for better visibility.
 - If run.sh fails: Check disk space.
-
