@@ -4,9 +4,9 @@ In phase 4, confirm that the generated localization graph (in svg format) corres
 
 --- Success criteria for Phase 4
 1. Root cause node "crash-000117[0x7a2]" can be found.
-2. All 4 key nodes (root cause, node 2, node 3, node 4) appear in sequence.
+2. All 4 key nodes (root cause, node 2, node 3, node 4) appear.
 3. The data flow path connects these nodes with directed edges.
-4. The terminal node shows MAGMA_LOG (equivalent to the crash site in Figure 5).
+4. The terminal node is MAGMA_LOG (equivalent to the crash site in Figure 5).
 
 
 --- Guidance for phase 4
@@ -18,7 +18,7 @@ First, we visit the upstream of the graph.
 Search for "crash-000117[0x7a2]" using the browser's in-page search (Ctrl+F), and the vertex node labeled as the root cause in Figure 5 will appear on your screen.
 Follow the direction of the arrows and trace the graph toward the downstream side.
 
-Then, you will encounter the difference highlighted (colored) node "v32 = (uint32_t) va_arg(ap, uint32_t);".
+Then, you will encounter "v32 = (uint32_t) va_arg(ap, uint32_t);" with differences highlighted (colored).
 Continue tracing the graph toward the downstream side.
 
 Next, you will encounter the node "td->td_tilewidth = v32;". 
@@ -36,8 +36,8 @@ Follow the thick blue edge labeled "dominates" that extends from this node.
 At last, you will arrive at "MAGMA_LOG("TIF008", op_offset >= scanline);", the terminal node of the localization graph.
 
 You may notice that the code shown at the crash site in Figure 5 differs from the code of the bottommost node in the generated localization graph, but in conclusion, this is not a problem.
-The code where the crash actually occurs is SETPIXEL(op, grey); is displayed for clarifying in Figure 5.
-On the other hand, Magma's canary MAGMA_LOG---displayed in the svg---is code that determines the occurrence of a crash (refer to our paper section 6.1 Dataset for details), and since we used it as the starting point to generate the localization graph.
+The code where the crash actually occurs, SETPIXEL(op, grey), is displayed in Figure 5 for clarification.
+On the other hand, Magma's canary MAGMA_LOG---displayed in the svg---is code that determines the occurrence of a crash (refer to our paper section 6.1 Dataset for details), and we used it as the starting point to generate the localization graph.
 
 The following code is the libtiff source code around the crash location.
 Ultimately, both of SETPIXEL and MAGMA_LOG refer to the same location in the code, so this display difference is not a problem.
