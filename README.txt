@@ -3,11 +3,12 @@
 This artifact contains source code for Section 6 of our paper.
 
 Dependencies: Ubuntu 22.04, Docker (usable from normal user), x86_64 machine, sudo.
-Infrastructure: Standard x86_64 machine (no special devices required; recommend 4 CPUs + 32GB RAM).
+Infrastructure: Standard x86_64 machine (no special devices required).
+Machine Spec: at least 4 CPUs + 32GB RAM + 100GB Storage.
 Expected runtime: 40 minutes (installation 15 minutes + claim 25 minutes).
 Repository: https://github.com/shina-lab/artifact_Sagitta
-To reproduce Claim 1: run install.sh then claims/claim1/run.sh.
-Expected output is in claims/claim1/expected/.
+To reproduce Claim 1: run install.sh then claims/claim1/run.sh and follow claims/claim1/expected/validation_info.txt.
+Expected output and validation information are in claims/claim1/expected/.
 
 
 --- List of source code and input/output files
@@ -16,7 +17,7 @@ This explains which folders correspond to source code and data.
 Software components (source code): 
     artifact/evaluation
         our analysis pipeline tailored for our tool library (used in section 6.3)
-        subfolders contains evaluated cases (e.g. TIF008), and run.sc invokes analysis pipeline.
+        sub-folders contains evaluated cases (e.g. TIF008), and run.sc invokes analysis pipeline.
     artifact/magma-v1.2 
         Magma framework (modified by us in section 6.1)
     artifact/polytracker
@@ -35,4 +36,10 @@ Software components (source code):
 Input pair (section 6.1): 
     In evaluation/input-file/, directories contains crash/non-crash inputs.
     Input pair is picked from these directory by run.sc in artifact/evaluation.
+
+
+--- Common issues
+- If SVG file is not generated: Check that Phase 1-3 completed without errors.
+- If nodes are hard to find: Use browser zoom-in/out for better visibility.
+- If run.sh fails: Check disk space.
 

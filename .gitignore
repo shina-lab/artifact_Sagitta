@@ -1,5 +1,8 @@
 polytracker.log
 claims/claim1/*.svg
 artifact/.env
+airflow/logs/
 
 compile_commands.json
+
+.vscode/
