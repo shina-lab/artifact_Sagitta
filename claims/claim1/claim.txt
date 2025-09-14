@@ -1,7 +1,8 @@
 === Claim 1: Localization Graph Reproduction for TIF008 
 Claim: Our technique successfully captures causal relationships between input-derived root causes and crash sites through localized graph visualization, even when causality involves both data flow and control flow dependencies.
 
-This artifact reproduces Case Study 6.4.2 (TIF008) from our evaluation, which identified 10 success cases where localized graphs captured root causes. 
+This artifact reproduces Case Study 6.4.2 (TIF008) from our evaluation, which identified 10 success cases where the localized graph captured the causal chain
+needed to understand the root cause. 
 We selected TIF008 as a representative since verifying all cases would be labor-intensive for evaluators. 
 TIF008 exemplifies our domination integration effectiveness in handling control flow dependencies.
 

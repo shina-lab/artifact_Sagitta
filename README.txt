@@ -4,7 +4,7 @@ This artifact contains source code for Section 6 of our paper.
 
 Dependencies: Ubuntu 22.04, Docker (accessible from a regular user), an x86_64 machine, and sudo.
 Infrastructure: Standard x86_64 machine (no special devices required).
-Machine Spec: 4 CPUs + 32GB RAM + 100GB Storage.
+Machine Spec: Recommend 4 CPUs, 32GB RAM, 100GB Storage.
 Expected runtime: 40 minutes (installation 15 minutes + claim 25 minutes).
 Repository: https://github.com/shina-lab/artifact_Sagitta
 To reproduce Claim 1: run install.sh, then claims/claim1/run.sh, and follow claims/claim1/expected/validation_info.txt.
