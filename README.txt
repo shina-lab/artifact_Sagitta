@@ -33,10 +33,10 @@ Software components (source code):
     artifact/pipeline.py
         Tool execution script (used in Claim 1)
 
-Input pair (section 6.1): 
+Input pair (Section 6.1): 
     evaluation/input-file/
-        Directories contain crash/non-crash inputs.
-        Selected automatically by run.sc scripts in artifact/evaluation/
+        Directories contain crash/non-crash inputs
+        Input pair is selected by run.sc scripts in artifact/evaluation/
 
 
 --- Common issues
