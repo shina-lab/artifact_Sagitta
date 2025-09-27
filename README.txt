@@ -10,6 +10,7 @@ Repository: https://github.com/shina-lab/artifact_Sagitta
 To reproduce Claim 1: run install.sh, then claims/claim1/run.sh, and follow claims/claim1/expected/validation_info.txt.
 Expected output and validation information are in claims/claim1/expected/.
 
+// NOTE: If Docker is not running on your machine, please install it using install.Docker.sh first. And then reboot your machine and run install.sh.
 
 --- List of source code and input/output files
 This section maps the artifact structure to the corresponding sections in our paper.
@@ -40,6 +41,7 @@ Input pair (Section 6.1):
 
 
 --- Common issues
+- If Docker-related errors occur during install.sh: Please install Docker using install.Docker.sh first.
 - If no SVG file is generated: Check that phase 1-3 completed without errors.
 - If nodes are hard to find: Use browser zoom-in/out for better visibility.
 - If run.sh fails: Check disk space.
