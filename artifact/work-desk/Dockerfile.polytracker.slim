@@ -27,7 +27,7 @@ RUN python3 -m pip install virtualenv ptpython ipdb
 
 ### Utilities
 RUN apt install -y sudo curl zip unzip vim git moreutils silversearcher-ag strace ltrace graphviz cairosvg locales
-RUN apt install -y linux-tools-generic linux-tools-`uname -r`
+RUN apt install -y linux-tools-generic
 RUN locale-gen ja_JP.UTF-8
 
 ### Install graph-tool
