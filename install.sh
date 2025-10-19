@@ -56,6 +56,7 @@ source ~/.profile
 ### Install PolyTracker
 cd ${artifact_dir}/polytracker
 git submodule update --init --recursive
+pip install 'urllib3<2.0'
 pip3 install -e . 
 
 ### Build docker image for PolyTracker
