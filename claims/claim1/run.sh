@@ -6,7 +6,7 @@ set -eux
 
 export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/go/bin
-source ~/.profile
+source $HOME/.profile
 
 ### Remove generated results
 rm -f ${script_dir}/*.svg

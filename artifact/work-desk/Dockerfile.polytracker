@@ -3,10 +3,11 @@ FROM trailofbits/polytracker:latest
 ARG USER
 ARG UID
 ARG GID
+ARG HOME
 ENV USER=$USER
 ENV UID=$UID
 ENV GID=$GID
-ENV HOME /home/$USER
+ENV HOME=$HOME
 
 ### Allow sudo
 RUN mkdir -p /etc/sudoers.d && \
@@ -68,7 +69,7 @@ RUN ldconfig
 
 ### Create user
 ### NOTE: ホームディレクトリはマウントポイントとして使う
-RUN useradd --create-home --home-dir /home/${USER} --uid ${UID} ${USER}
+RUN useradd --create-home --home-dir ${HOME} --uid ${UID} ${USER}
 RUN usermod -aG sudo ${USER}
 
 ENV WLLVM_BC_STORE=/project_bitcode

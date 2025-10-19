@@ -21,6 +21,8 @@ def dockerBuild(name: String, args: Seq[String]): os.CommandResult = {
     "-f",
     dockerfile(name).toString(),
     "--build-arg",
+    s"HOME=${home}",
+    "--build-arg",
     s"USER=${user}",
     "--build-arg",
     s"UID=${uid}",

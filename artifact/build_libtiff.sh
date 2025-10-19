@@ -8,7 +8,7 @@ set -e  # Exit on any error
 
 export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/go/bin
-source ~/.profile
+source $HOME/.profile
 
 # Get the script directory and set up paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

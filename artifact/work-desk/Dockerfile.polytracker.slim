@@ -3,10 +3,11 @@ FROM trailofbits/polytracker:latest
 ARG USER
 ARG UID
 ARG GID
+ARG HOME
 ENV USER=$USER
 ENV UID=$UID
 ENV GID=$GID
-ENV HOME /home/$USER
+ENV HOME=$HOME
 
 WORKDIR /build
 
@@ -38,7 +39,7 @@ RUN pip3 install "numpy<2" scipy pycairo==1.26.1 matplotlib
 
 ### Create user
 ### NOTE: ホームディレクトリはマウントポイントとして使う
-RUN useradd --create-home --home-dir /home/${USER} --uid ${UID} ${USER}
+RUN useradd --create-home --home-dir ${HOME} --uid ${UID} ${USER}
 RUN usermod -aG sudo ${USER}
 
 ENV WLLVM_BC_STORE=/project_bitcode

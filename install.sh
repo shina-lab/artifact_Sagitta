@@ -51,7 +51,7 @@ sudo apt install -y python3 python3-pip
 if ! command -v scala-cli &> /dev/null; then
     curl -sSLf https://scala-cli.virtuslab.org/get | sh
 fi
-source ~/.profile
+source $HOME/.profile
 
 ### Install PolyTracker
 cd ${artifact_dir}/polytracker
